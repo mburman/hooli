@@ -4,6 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	//	"github.com/mburman/hooli/acceptor"
+	//	"github.com/mburman/hooli/proposer"
 	"strings"
 )
 
@@ -51,4 +53,8 @@ func printFlags() {
 func main() {
 	flag.Parse()
 	printFlags()
+
+	// START UP ACCEPTOR RPC SERVER.
+
+	// START LISTENING FOR MESSAGES FROM CLIENTS.
 }
