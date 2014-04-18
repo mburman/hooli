@@ -24,12 +24,12 @@ func NewAcceptor(port int) *acceptorObj {
 	return &a
 }
 
-func (a *acceptorObj) Prepare(args *acceptrpc.PrepareArgs, reply *acceptrpc.PrepareReply) {
-
+func (a *acceptorObj) Prepare(args *acceptrpc.PrepareArgs, reply *acceptrpc.PrepareReply) error {
+	return nil
 }
 
-func (a *acceptorObj) Accept(args *acceptrpc.AcceptArgs, reply *acceptrpc.AcceptReply) {
-
+func (a *acceptorObj) Accept(args *acceptrpc.AcceptArgs, reply *acceptrpc.AcceptReply) error {
+	return nil
 }
 
 func setupRPC(a *acceptorObj, port int) {
