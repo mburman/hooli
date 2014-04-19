@@ -22,22 +22,14 @@ func main() {
 	flag.Parse()
 	fmt.Println("Contacting server on port: ", *masterServerHostPort)
 
-	// Keep redialing till we connect to the server.
 	client, err := rpc.DialHTTP("tcp", *masterServerHostPort)
-	if err != nil {
-		LOGE.Println("redialing:", err)
-		dialTicker := time.NewTicker(time.Second)
-	DialLoop:
-		for {
-			select {
-			case <-dialTicker.C:
-				client, err = rpc.DialHTTP("tcp", *masterServerHostPort)
-				if err == nil {
-					break DialLoop
-				}
-			}
-		}
+	// Keep redialing till we connect to the server.
+	for err != nil {
+		time.Sleep(time.Second)
+		LOGE.Println("client redialing because of error: ", err)
+		client, err = rpc.DialHTTP("tcp", *masterServerHostPort)
 	}
+	LOGE.Println("client dialed successfully")
 
 	request := &proposerrpc.PostMessageArgs{
 		Message: proposerrpc.Message{
