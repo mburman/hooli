@@ -7,19 +7,19 @@ import (
 )
 
 type PrepareArgs struct {
-	proposalNumber int
+	ProposalNumber int
 }
 
 type PrepareReply struct {
-	acceptedProposalNumber int
-	acceptedMessage        proposerrpc.Message
+	AcceptedProposalNumber int
+	AcceptedMessage        proposerrpc.Message
 }
 
 type AcceptArgs struct {
-	proposalNumber  int
-	proposalMessage proposerrpc.Message
+	ProposalNumber  int
+	ProposalMessage proposerrpc.Message
 }
 
 type AcceptReply struct {
-	minProposal int
+	MinProposal int
 }
