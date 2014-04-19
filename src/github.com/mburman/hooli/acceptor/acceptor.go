@@ -2,7 +2,7 @@ package acceptor
 
 import (
 	"fmt"
-	"github.com/mburman/hooli/rpc/acceptrpc"
+	"github.com/mburman/hooli/rpc/acceptorrpc"
 	"io/ioutil"
 	"log"
 	"net"
@@ -24,11 +24,11 @@ func NewAcceptor(port int) *acceptorObj {
 	return &a
 }
 
-func (a *acceptorObj) Prepare(args *acceptrpc.PrepareArgs, reply *acceptrpc.PrepareReply) error {
+func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.PrepareReply) error {
 	return nil
 }
 
-func (a *acceptorObj) Accept(args *acceptrpc.AcceptArgs, reply *acceptrpc.AcceptReply) error {
+func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.AcceptReply) error {
 	return nil
 }
 

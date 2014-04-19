@@ -1,6 +1,6 @@
 // Contains accept RPCs
 
-package acceptrpc
+package acceptorrpc
 
 import (
 	"github.com/mburman/hooli/rpc/proposerrpc"
