@@ -7,6 +7,8 @@
 //
 
 #import "WHOAppDelegate.h"
+#import "WHOLoginViewController.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 @implementation WHOAppDelegate
 
@@ -14,9 +16,19 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
+    WHOLoginViewController* vc = [[WHOLoginViewController alloc] init];
+    self.window.rootViewController = vc;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *) sourceApplication annotation:(id)annotation {
+    
+    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    
+    return wasHandled;
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

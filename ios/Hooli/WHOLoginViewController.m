@@ -9,7 +9,7 @@
 #import "WHOLoginViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 
-@interface WHOLoginViewController ()
+@interface WHOLoginViewController () <FBLoginViewDelegate>
 
 @end
 
@@ -27,7 +27,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    
+    // Make and place the Facebook login view
+    FBLoginView *loginView = [[FBLoginView alloc] init];
+    [loginView setCenter:(CGPoint) {
+        .x = CGRectGetMidX(screenRect),
+        .y = CGRectGetMaxY(screenRect) - 150
+    }];
+    [self.view addSubview:loginView];
+}
+
+- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    
 }
 
 - (void)didReceiveMemoryWarning
