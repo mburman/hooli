@@ -17,7 +17,7 @@
 
 @implementation WHOMessageTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithStyle:(UITableViewStyle)style WithUserName:(NSString* )userName
 {
     self = [super initWithStyle:style];
     if (self) {
@@ -35,6 +35,12 @@
         [titleLabel sizeToFit];
         [self.navigationItem setTitleView:titleLabel];
         self.messages = [NSMutableArray array];
+        self.userName = userName;
+        
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationManager.delegate = self;
+        [self.locationManager startUpdatingLocation];
     }
     return self;
 }
@@ -58,6 +64,12 @@
     [self.tableView registerNib:[UINib nibWithNibName:@"WHOMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"MessageCell"];
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    CLLocation *currLoc = [locations firstObject];
+    self.userLocation = currLoc;
+    
+}
+
 - (void)newMessage:(id) sender {
     WHONewMessageViewController* form = [[WHONewMessageViewController alloc] init];
     form.delegate = self;
@@ -65,8 +77,16 @@
     
 }
 
-- (void)receivedNewMessage:(NSString *)message withLocation:(NSString *)location {
+- (void)receivedNewMessage:(NSString *)message {
+    WHOMessage* messageObj = [[WHOMessage alloc] initWithMessage:message Author:self.userName Location:self.userLocation];
     
+    //TODO send message to server
+}
+
+- (NSString *)distanceBetweenUserAndLocation:(CLLocation *)location {
+    CLLocationDistance CLDistance = [location distanceFromLocation:location];
+    NSString* distance = [NSString stringWithFormat:@"%.1f miles away",(CLDistance/1609.344)];
+    return distance;
 }
 
 - (void)didReceiveMemoryWarning
@@ -90,16 +110,19 @@
     return self.messages.count;
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
+    WHOMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MessageCell" forIndexPath:indexPath];
+    WHOMessage* message = [self.messages objectAtIndex:indexPath.row];
+    cell.messageLabel.text = message.message;
+    cell.authorLabel.text = message.author;
+    cell.distanceLabel.text = [self distanceBetweenUserAndLocation:message.location];
     return cell;
 }
-*/
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 150.0;
+}
 
 /*
 // Override to support conditional editing of the table view.

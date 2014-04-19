@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @protocol WHOMessageProtocol <NSObject>
-- (void)receivedNewMessage:(NSString* )message withLocation:(NSString* ) location;
+- (void)receivedNewMessage:(NSString* )message;
 @end
 
-@interface WHONewMessageViewController : UIViewController
+@interface WHONewMessageViewController : UIViewController 
+
 - (IBAction)messageView:(id)sender;
 @property (strong, nonatomic) IBOutlet UITextField *messageField;
 @property (nonatomic, strong) id<WHOMessageProtocol> delegate;

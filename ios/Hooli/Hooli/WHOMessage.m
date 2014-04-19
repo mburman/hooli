@@ -10,11 +10,10 @@
 
 @implementation WHOMessage
 
-- (instancetype)initWithMessage:(NSString *)message Author:(NSString *)author Distance:(NSString *)distance Location:(NSString *)location {
+- (instancetype)initWithMessage:(NSString *)message Author:(NSString *)author Location:(CLLocation *)location {
     if (self = [super init]) {
         self.message = message;
         self.author = author;
-        self.distance = distance;
         self.location = location;
     }
     return self;

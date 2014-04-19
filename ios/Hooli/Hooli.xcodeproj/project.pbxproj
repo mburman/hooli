@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FC4F68C919030FC200ACC6C0 /* WHONewMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC4F68C719030FC200ACC6C0 /* WHONewMessageViewController.m */; };
 		FC4F68CA19030FC200ACC6C0 /* WHONewMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC4F68C819030FC200ACC6C0 /* WHONewMessageViewController.xib */; };
+		FC4F68CC19031B4600ACC6C0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4F68CB19031B4600ACC6C0 /* CoreLocation.framework */; };
 		FC513945190301E100124689 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513944190301E100124689 /* Foundation.framework */; };
 		FC513947190301E100124689 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513946190301E100124689 /* CoreGraphics.framework */; };
 		FC513949190301E100124689 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513948190301E100124689 /* UIKit.framework */; };
@@ -43,6 +44,7 @@
 		FC4F68C619030FC200ACC6C0 /* WHONewMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHONewMessageViewController.h; sourceTree = "<group>"; };
 		FC4F68C719030FC200ACC6C0 /* WHONewMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHONewMessageViewController.m; sourceTree = "<group>"; };
 		FC4F68C819030FC200ACC6C0 /* WHONewMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WHONewMessageViewController.xib; sourceTree = "<group>"; };
+		FC4F68CB19031B4600ACC6C0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		FC513941190301E100124689 /* Hooli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hooli.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC513944190301E100124689 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FC513946190301E100124689 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -76,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4F68CC19031B4600ACC6C0 /* CoreLocation.framework in Frameworks */,
 				FC513947190301E100124689 /* CoreGraphics.framework in Frameworks */,
 				FC5139771903037300124689 /* FacebookSDK.framework in Frameworks */,
 				FC513949190301E100124689 /* UIKit.framework in Frameworks */,
@@ -118,6 +121,7 @@
 		FC513943190301E100124689 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC4F68CB19031B4600ACC6C0 /* CoreLocation.framework */,
 				FC5139761903037300124689 /* FacebookSDK.framework */,
 				FC513944190301E100124689 /* Foundation.framework */,
 				FC513946190301E100124689 /* CoreGraphics.framework */,

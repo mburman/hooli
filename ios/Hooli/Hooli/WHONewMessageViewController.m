@@ -31,13 +31,12 @@
     self.navigationItem.rightBarButtonItem = submitButton;
     
     //for Done button on keyboard
-//    [self.messageField addTarget:self action:@selector(messageView:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [self.messageField addTarget:self action:@selector(messageView:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)submit:(id)sender {
     //TODO compute user location
-    NSString* userLocation;
-    [self.delegate receivedNewMessage:self.messageField.text withLocation:userLocation];
+    [self.delegate receivedNewMessage:self.messageField.text];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

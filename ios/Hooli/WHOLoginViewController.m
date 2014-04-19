@@ -40,12 +40,19 @@
     [self.view addSubview:loginView];
 }
 
+- (void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
+    NSLog(@"user is logged in with Facebook, switching to messageTableView");
+    UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name]];
+    [self presentViewController:nav animated:NO completion:nil];
+}
+
+/*
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     NSLog(@"user logged in with Facebook, switching to messageTableView");
     UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain]];
     [self presentViewController:nav animated:NO completion:nil];
 }
-
+*/
 - (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
     loginView.hidden = NO;
 }
