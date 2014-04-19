@@ -1,0 +1,473 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FC513945190301E100124689 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513944190301E100124689 /* Foundation.framework */; };
+		FC513947190301E100124689 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513946190301E100124689 /* CoreGraphics.framework */; };
+		FC513949190301E100124689 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513948190301E100124689 /* UIKit.framework */; };
+		FC51394F190301E100124689 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC51394D190301E100124689 /* InfoPlist.strings */; };
+		FC513951190301E100124689 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513950190301E100124689 /* main.m */; };
+		FC513955190301E100124689 /* WHOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513954190301E100124689 /* WHOAppDelegate.m */; };
+		FC513957190301E100124689 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC513956190301E100124689 /* Images.xcassets */; };
+		FC51395E190301E100124689 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC51395D190301E100124689 /* XCTest.framework */; };
+		FC51395F190301E100124689 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513944190301E100124689 /* Foundation.framework */; };
+		FC513960190301E100124689 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513948190301E100124689 /* UIKit.framework */; };
+		FC513968190301E100124689 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC513966190301E100124689 /* InfoPlist.strings */; };
+		FC51396A190301E100124689 /* HooliTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513969190301E100124689 /* HooliTests.m */; };
+		FC513975190301F100124689 /* WHOLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513974190301F100124689 /* WHOLoginViewController.m */; };
+		FC5139771903037300124689 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC5139761903037300124689 /* FacebookSDK.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FC513961190301E100124689 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC513939190301E100124689 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FC513940190301E100124689;
+			remoteInfo = Hooli;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FC513941190301E100124689 /* Hooli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hooli.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC513944190301E100124689 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FC513946190301E100124689 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FC513948190301E100124689 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FC51394C190301E100124689 /* Hooli-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Hooli-Info.plist"; sourceTree = "<group>"; };
+		FC51394E190301E100124689 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC513950190301E100124689 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FC513952190301E100124689 /* Hooli-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hooli-Prefix.pch"; sourceTree = "<group>"; };
+		FC513953190301E100124689 /* WHOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHOAppDelegate.h; sourceTree = "<group>"; };
+		FC513954190301E100124689 /* WHOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WHOAppDelegate.m; sourceTree = "<group>"; };
+		FC513956190301E100124689 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FC51395C190301E100124689 /* HooliTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HooliTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC51395D190301E100124689 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		FC513965190301E100124689 /* HooliTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HooliTests-Info.plist"; sourceTree = "<group>"; };
+		FC513967190301E100124689 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC513969190301E100124689 /* HooliTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HooliTests.m; sourceTree = "<group>"; };
+		FC513973190301F100124689 /* WHOLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WHOLoginViewController.h; path = ../WHOLoginViewController.h; sourceTree = "<group>"; };
+		FC513974190301F100124689 /* WHOLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WHOLoginViewController.m; path = ../WHOLoginViewController.m; sourceTree = "<group>"; };
+		FC5139761903037300124689 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FC51393E190301E100124689 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC513947190301E100124689 /* CoreGraphics.framework in Frameworks */,
+				FC5139771903037300124689 /* FacebookSDK.framework in Frameworks */,
+				FC513949190301E100124689 /* UIKit.framework in Frameworks */,
+				FC513945190301E100124689 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC513959190301E100124689 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC51395E190301E100124689 /* XCTest.framework in Frameworks */,
+				FC513960190301E100124689 /* UIKit.framework in Frameworks */,
+				FC51395F190301E100124689 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FC513938190301E100124689 = {
+			isa = PBXGroup;
+			children = (
+				FC51394A190301E100124689 /* Hooli */,
+				FC513963190301E100124689 /* HooliTests */,
+				FC513943190301E100124689 /* Frameworks */,
+				FC513942190301E100124689 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FC513942190301E100124689 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FC513941190301E100124689 /* Hooli.app */,
+				FC51395C190301E100124689 /* HooliTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FC513943190301E100124689 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FC5139761903037300124689 /* FacebookSDK.framework */,
+				FC513944190301E100124689 /* Foundation.framework */,
+				FC513946190301E100124689 /* CoreGraphics.framework */,
+				FC513948190301E100124689 /* UIKit.framework */,
+				FC51395D190301E100124689 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FC51394A190301E100124689 /* Hooli */ = {
+			isa = PBXGroup;
+			children = (
+				FC513953190301E100124689 /* WHOAppDelegate.h */,
+				FC513954190301E100124689 /* WHOAppDelegate.m */,
+				FC513973190301F100124689 /* WHOLoginViewController.h */,
+				FC513974190301F100124689 /* WHOLoginViewController.m */,
+				FC513956190301E100124689 /* Images.xcassets */,
+				FC51394B190301E100124689 /* Supporting Files */,
+			);
+			path = Hooli;
+			sourceTree = "<group>";
+		};
+		FC51394B190301E100124689 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FC51394C190301E100124689 /* Hooli-Info.plist */,
+				FC51394D190301E100124689 /* InfoPlist.strings */,
+				FC513950190301E100124689 /* main.m */,
+				FC513952190301E100124689 /* Hooli-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FC513963190301E100124689 /* HooliTests */ = {
+			isa = PBXGroup;
+			children = (
+				FC513969190301E100124689 /* HooliTests.m */,
+				FC513964190301E100124689 /* Supporting Files */,
+			);
+			path = HooliTests;
+			sourceTree = "<group>";
+		};
+		FC513964190301E100124689 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FC513965190301E100124689 /* HooliTests-Info.plist */,
+				FC513966190301E100124689 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FC513940190301E100124689 /* Hooli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC51396D190301E100124689 /* Build configuration list for PBXNativeTarget "Hooli" */;
+			buildPhases = (
+				FC51393D190301E100124689 /* Sources */,
+				FC51393E190301E100124689 /* Frameworks */,
+				FC51393F190301E100124689 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hooli;
+			productName = Hooli;
+			productReference = FC513941190301E100124689 /* Hooli.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FC51395B190301E100124689 /* HooliTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC513970190301E100124689 /* Build configuration list for PBXNativeTarget "HooliTests" */;
+			buildPhases = (
+				FC513958190301E100124689 /* Sources */,
+				FC513959190301E100124689 /* Frameworks */,
+				FC51395A190301E100124689 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FC513962190301E100124689 /* PBXTargetDependency */,
+			);
+			name = HooliTests;
+			productName = HooliTests;
+			productReference = FC51395C190301E100124689 /* HooliTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FC513939190301E100124689 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = WHO;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = whoisdylan;
+				TargetAttributes = {
+					FC51395B190301E100124689 = {
+						TestTargetID = FC513940190301E100124689;
+					};
+				};
+			};
+			buildConfigurationList = FC51393C190301E100124689 /* Build configuration list for PBXProject "Hooli" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FC513938190301E100124689;
+			productRefGroup = FC513942190301E100124689 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FC513940190301E100124689 /* Hooli */,
+				FC51395B190301E100124689 /* HooliTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FC51393F190301E100124689 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC51394F190301E100124689 /* InfoPlist.strings in Resources */,
+				FC513957190301E100124689 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC51395A190301E100124689 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC513968190301E100124689 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FC51393D190301E100124689 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC513951190301E100124689 /* main.m in Sources */,
+				FC513975190301F100124689 /* WHOLoginViewController.m in Sources */,
+				FC513955190301E100124689 /* WHOAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC513958190301E100124689 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC51396A190301E100124689 /* HooliTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FC513962190301E100124689 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FC513940190301E100124689 /* Hooli */;
+			targetProxy = FC513961190301E100124689 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FC51394D190301E100124689 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC51394E190301E100124689 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FC513966190301E100124689 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC513967190301E100124689 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FC51396B190301E100124689 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FC51396C190301E100124689 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FC51396E190301E100124689 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/dylan/Documents/FacebookSDK,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Hooli/Hooli-Prefix.pch";
+				INFOPLIST_FILE = "Hooli/Hooli-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FC51396F190301E100124689 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/dylan/Documents/FacebookSDK,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Hooli/Hooli-Prefix.pch";
+				INFOPLIST_FILE = "Hooli/Hooli-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		FC513971190301E100124689 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Hooli.app/Hooli";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Hooli/Hooli-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "HooliTests/HooliTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		FC513972190301E100124689 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Hooli.app/Hooli";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Hooli/Hooli-Prefix.pch";
+				INFOPLIST_FILE = "HooliTests/HooliTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FC51393C190301E100124689 /* Build configuration list for PBXProject "Hooli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC51396B190301E100124689 /* Debug */,
+				FC51396C190301E100124689 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FC51396D190301E100124689 /* Build configuration list for PBXNativeTarget "Hooli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC51396E190301E100124689 /* Debug */,
+				FC51396F190301E100124689 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		FC513970190301E100124689 /* Build configuration list for PBXNativeTarget "HooliTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC513971190301E100124689 /* Debug */,
+				FC513972190301E100124689 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FC513939190301E100124689 /* Project object */;
+}
