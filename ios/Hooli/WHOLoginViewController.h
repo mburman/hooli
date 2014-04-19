@@ -11,4 +11,6 @@
 
 @interface WHOLoginViewController : UIViewController <FBLoginViewDelegate>
 
+@property (nonatomic) BOOL waitingToLogIn;
+
 @end

@@ -20,6 +20,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.waitingToLogIn = YES;
     }
     return self;
 }
@@ -41,7 +42,11 @@
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user {
+    if (!self.waitingToLogIn) {
+        return;
+    }
     NSLog(@"user is logged in with Facebook, switching to messageTableView");
+    self.waitingToLogIn = NO;
     UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name]];
     [self presentViewController:nav animated:NO completion:nil];
 }
