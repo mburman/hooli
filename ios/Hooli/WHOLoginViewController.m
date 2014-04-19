@@ -7,9 +7,9 @@
 //
 
 #import "WHOLoginViewController.h"
-#import <FacebookSDK/FacebookSDK.h>
+#import "WHOMessageTableViewController.h"
 
-@interface WHOLoginViewController () <FBLoginViewDelegate>
+@interface WHOLoginViewController ()
 
 @end
 
@@ -31,6 +31,8 @@
     
     // Make and place the Facebook login view
     FBLoginView *loginView = [[FBLoginView alloc] init];
+    loginView.hidden = YES;
+    loginView.delegate = self;
     [loginView setCenter:(CGPoint) {
         .x = CGRectGetMidX(screenRect),
         .y = CGRectGetMaxY(screenRect) - 150
@@ -38,8 +40,14 @@
     [self.view addSubview:loginView];
 }
 
-- (void) loginViewShowingLoggedInUser:(FBLoginView *)loginView {
-    
+- (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    NSLog(@"user logged in with Facebook, switching to messageTableView");
+    UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain]];
+    [self presentViewController:nav animated:NO completion:nil];
+}
+
+- (void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView {
+    loginView.hidden = NO;
 }
 
 - (void)didReceiveMemoryWarning

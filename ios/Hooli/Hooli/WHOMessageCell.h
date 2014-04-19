@@ -1,5 +1,5 @@
 //
-//  WHOLoginViewController.h
+//  WHOMessageCell.h
 //  Hooli
 //
 //  Created by dylan on 4/19/14.
@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <FacebookSDK/FacebookSDK.h>
 
-@interface WHOLoginViewController : UIViewController <FBLoginViewDelegate>
+@interface WHOMessageCell : UITableViewCell
 
 @end

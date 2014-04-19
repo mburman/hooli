@@ -21,6 +21,10 @@
 		FC51396A190301E100124689 /* HooliTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513969190301E100124689 /* HooliTests.m */; };
 		FC513975190301F100124689 /* WHOLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC513974190301F100124689 /* WHOLoginViewController.m */; };
 		FC5139771903037300124689 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC5139761903037300124689 /* FacebookSDK.framework */; };
+		FC51397A1903071300124689 /* WHOMessageTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5139791903071300124689 /* WHOMessageTableViewController.m */; };
+		FC51397D1903075F00124689 /* WHOMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = FC51397C1903075F00124689 /* WHOMessage.m */; };
+		FC5139811903083A00124689 /* WHOMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC51397F1903083A00124689 /* WHOMessageCell.m */; };
+		FC5139821903083A00124689 /* WHOMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC5139801903083A00124689 /* WHOMessageCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +57,13 @@
 		FC513973190301F100124689 /* WHOLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WHOLoginViewController.h; path = ../WHOLoginViewController.h; sourceTree = "<group>"; };
 		FC513974190301F100124689 /* WHOLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WHOLoginViewController.m; path = ../WHOLoginViewController.m; sourceTree = "<group>"; };
 		FC5139761903037300124689 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		FC5139781903071300124689 /* WHOMessageTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHOMessageTableViewController.h; sourceTree = "<group>"; };
+		FC5139791903071300124689 /* WHOMessageTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHOMessageTableViewController.m; sourceTree = "<group>"; };
+		FC51397B1903075F00124689 /* WHOMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHOMessage.h; sourceTree = "<group>"; };
+		FC51397C1903075F00124689 /* WHOMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHOMessage.m; sourceTree = "<group>"; };
+		FC51397E1903083A00124689 /* WHOMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHOMessageCell.h; sourceTree = "<group>"; };
+		FC51397F1903083A00124689 /* WHOMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHOMessageCell.m; sourceTree = "<group>"; };
+		FC5139801903083A00124689 /* WHOMessageCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WHOMessageCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +129,13 @@
 				FC513954190301E100124689 /* WHOAppDelegate.m */,
 				FC513973190301F100124689 /* WHOLoginViewController.h */,
 				FC513974190301F100124689 /* WHOLoginViewController.m */,
+				FC5139781903071300124689 /* WHOMessageTableViewController.h */,
+				FC5139791903071300124689 /* WHOMessageTableViewController.m */,
+				FC51397B1903075F00124689 /* WHOMessage.h */,
+				FC51397C1903075F00124689 /* WHOMessage.m */,
+				FC51397E1903083A00124689 /* WHOMessageCell.h */,
+				FC51397F1903083A00124689 /* WHOMessageCell.m */,
+				FC5139801903083A00124689 /* WHOMessageCell.xib */,
 				FC513956190301E100124689 /* Images.xcassets */,
 				FC51394B190301E100124689 /* Supporting Files */,
 			);
@@ -230,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC51394F190301E100124689 /* InfoPlist.strings in Resources */,
+				FC5139821903083A00124689 /* WHOMessageCell.xib in Resources */,
 				FC513957190301E100124689 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,9 +268,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC5139811903083A00124689 /* WHOMessageCell.m in Sources */,
+				FC51397A1903071300124689 /* WHOMessageTableViewController.m in Sources */,
 				FC513951190301E100124689 /* main.m in Sources */,
 				FC513975190301F100124689 /* WHOLoginViewController.m in Sources */,
 				FC513955190301E100124689 /* WHOAppDelegate.m in Sources */,
+				FC51397D1903075F00124689 /* WHOMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
