@@ -4,8 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/mburman/hooli/acceptor"
-	//	"github.com/mburman/hooli/proposer"
+	//	"github.com/mburman/hooli/acceptor"
+	"github.com/mburman/hooli/proposer"
 	"strings"
 )
 
@@ -55,7 +55,9 @@ func main() {
 	printFlags()
 
 	// START UP ACCEPTOR RPC SERVER.
-	a := acceptor.NewAcceptor(*nodePort)
-	a = a
+	//a := acceptor.NewAcceptor(*nodePort)
 	// START LISTENING FOR MESSAGES FROM CLIENTS.
+
+	proposer.NewProposer(*nodePort, nil)
+	select {}
 }

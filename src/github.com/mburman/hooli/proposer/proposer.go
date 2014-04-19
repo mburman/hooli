@@ -38,6 +38,7 @@ func NewProposer(port int, acceptorPorts []int) *proposerObj {
 // Client calls this to post a message.
 func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
 	// Promise to handle. Don't block.
+	fmt.Printf("Received Message:  %+v\n", args.Message)
 	go handleMessage(p, &args.Message)
 	return nil
 }
