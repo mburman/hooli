@@ -16,13 +16,19 @@ var LOGE = log.New(os.Stderr, "ERROR ", log.Lmicroseconds|log.Lshortfile)
 var LOGV = log.New(ioutil.Discard, "VERBOSE ", log.Lmicroseconds|log.Lshortfile)
 
 type proposerObj struct {
+	port          int
+	acceptorPorts []int
 }
 
-// port: port to start the proposerObj on.
-func NewProposer(port int) *proposerObj {
-	var a proposerObj
-	setupRPC(&a, port)
-	return &a
+// port: port for proposer to listen to client requests on.
+// acceptorPorts: ports contact acceptors on.
+func NewProposer(port int, acceptorPorts []int) *proposerObj {
+	var p proposerObj
+	p.port = port
+	p.acceptorPorts = acceptorPorts
+
+	setupRPC(&p, port)
+	return &p
 }
 
 // Client calls this to post a message.
