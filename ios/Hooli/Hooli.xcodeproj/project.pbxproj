@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC4F68C919030FC200ACC6C0 /* WHONewMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC4F68C719030FC200ACC6C0 /* WHONewMessageViewController.m */; };
+		FC4F68CA19030FC200ACC6C0 /* WHONewMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FC4F68C819030FC200ACC6C0 /* WHONewMessageViewController.xib */; };
 		FC513945190301E100124689 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513944190301E100124689 /* Foundation.framework */; };
 		FC513947190301E100124689 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513946190301E100124689 /* CoreGraphics.framework */; };
 		FC513949190301E100124689 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC513948190301E100124689 /* UIKit.framework */; };
@@ -38,6 +40,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FC4F68C619030FC200ACC6C0 /* WHONewMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WHONewMessageViewController.h; sourceTree = "<group>"; };
+		FC4F68C719030FC200ACC6C0 /* WHONewMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WHONewMessageViewController.m; sourceTree = "<group>"; };
+		FC4F68C819030FC200ACC6C0 /* WHONewMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WHONewMessageViewController.xib; sourceTree = "<group>"; };
 		FC513941190301E100124689 /* Hooli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hooli.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC513944190301E100124689 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FC513946190301E100124689 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -131,6 +136,9 @@
 				FC513974190301F100124689 /* WHOLoginViewController.m */,
 				FC5139781903071300124689 /* WHOMessageTableViewController.h */,
 				FC5139791903071300124689 /* WHOMessageTableViewController.m */,
+				FC4F68C619030FC200ACC6C0 /* WHONewMessageViewController.h */,
+				FC4F68C719030FC200ACC6C0 /* WHONewMessageViewController.m */,
+				FC4F68C819030FC200ACC6C0 /* WHONewMessageViewController.xib */,
 				FC51397B1903075F00124689 /* WHOMessage.h */,
 				FC51397C1903075F00124689 /* WHOMessage.m */,
 				FC51397E1903083A00124689 /* WHOMessageCell.h */,
@@ -247,6 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4F68CA19030FC200ACC6C0 /* WHONewMessageViewController.xib in Resources */,
 				FC51394F190301E100124689 /* InfoPlist.strings in Resources */,
 				FC5139821903083A00124689 /* WHOMessageCell.xib in Resources */,
 				FC513957190301E100124689 /* Images.xcassets in Resources */,
@@ -274,6 +283,7 @@
 				FC513975190301F100124689 /* WHOLoginViewController.m in Sources */,
 				FC513955190301E100124689 /* WHOAppDelegate.m in Sources */,
 				FC51397D1903075F00124689 /* WHOMessage.m in Sources */,
+				FC4F68C919030FC200ACC6C0 /* WHONewMessageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +490,7 @@
 				FC51396F190301E100124689 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FC513970190301E100124689 /* Build configuration list for PBXNativeTarget "HooliTests" */ = {
 			isa = XCConfigurationList;
@@ -488,6 +499,7 @@
 				FC513972190301E100124689 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

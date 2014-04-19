@@ -10,8 +10,10 @@
 
 @interface WHOMessage : NSObject
 
-- (instancetype) initWithMessage: (NSString* )message;
+- (instancetype) initWithMessage:(NSString* )message Author:(NSString* )author Distance:(NSString* )distance Location:(NSString* )location;
 @property (nonatomic, strong) NSString* message;
-@property (nonatomic, strong) NSString* name;
+@property (nonatomic, strong) NSString* author;
+@property (nonatomic, strong) NSString* distance;
+@property (nonatomic, strong) NSString* location;
 
 @end

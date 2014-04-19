@@ -7,10 +7,11 @@
 //
 
 #import "WHOMessageTableViewController.h"
+#import "WHONewMessageViewController.h"
 #import "WHOMessage.h"
 #import "WHOMessageCell.h"
 
-@interface WHOMessageTableViewController ()
+@interface WHOMessageTableViewController () <WHOMessageProtocol>
 
 @end
 
@@ -24,7 +25,7 @@
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
         UILabel* titleLabel = [[UILabel alloc] init];
         [titleLabel setText:@"Hooli"];
-        [titleLabel setFont:[UIFont fontWithName:@"Superclarendon-BlackItalic" size:24.0]];
+        [titleLabel setFont:[UIFont fontWithName:@"Superclarendon-BlackItalic" size:25.0]];
         [titleLabel setTextColor:[UIColor colorWithRed:70.0/255 green:235.0/255 blue:150.0/255 alpha:.85]];
 //        [titleLabel setAlpha:0.75];
         [titleLabel.layer setShadowColor:[UIColor darkGrayColor].CGColor];
@@ -47,6 +48,25 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    // TODO load messages from server here
+    
+    UIBarButtonItem* newMessageButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newMessage:)];
+    self.navigationItem.rightBarButtonItem = newMessageButton;
+    
+    [self.tableView setRowHeight:150.0];
+    [self.tableView registerNib:[UINib nibWithNibName:@"WHOMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"MessageCell"];
+}
+
+- (void)newMessage:(id) sender {
+    WHONewMessageViewController* form = [[WHONewMessageViewController alloc] init];
+    form.delegate = self;
+    [self.navigationController pushViewController:form animated:YES];
+    
+}
+
+- (void)receivedNewMessage:(NSString *)message withLocation:(NSString *)location {
+    
 }
 
 - (void)didReceiveMemoryWarning

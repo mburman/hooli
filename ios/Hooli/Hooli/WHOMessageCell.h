@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface WHOMessageCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *messageLabel;
+@property (strong, nonatomic) IBOutlet UILabel *authorLabel;
+@property (strong, nonatomic) IBOutlet UILabel *distanceLabel;
 
 @end
