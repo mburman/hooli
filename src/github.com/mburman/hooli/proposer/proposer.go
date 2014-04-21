@@ -7,6 +7,7 @@ import (
 	"github.com/mburman/hooli/rpc/proposerrpc"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"net/rpc"
@@ -18,11 +19,13 @@ var LOGE = log.New(os.Stderr, "ERROR ", log.Lmicroseconds|log.Lshortfile)
 var LOGV = log.New(ioutil.Discard, "VERBOSE ", log.Lmicroseconds|log.Lshortfile)
 
 type proposerObj struct {
-	port          int
-	acceptorPorts []int
-	messageQueue  chan *proposerrpc.Message // messages to be handled
-	messages      []proposerrpc.Message     // list of messages
-	acceptorList  []*rpc.Client
+	port              int
+	acceptorPorts     []int
+	messageQueue      chan *proposerrpc.Message // messages to be handled
+	messages          []proposerrpc.Message     // list of messages
+	acceptorList      []*rpc.Client
+	maxProposalNumber int // max proposal number server has seen
+	id                int // proposer id
 }
 
 // port: port for proposer to listen to client requests on.
@@ -33,6 +36,9 @@ func NewProposer(port int, acceptorPorts []int) *proposerObj {
 	p.acceptorPorts = acceptorPorts
 	p.messageQueue = make(chan *proposerrpc.Message, 100)
 	p.acceptorList = make([]*rpc.Client, 0)
+
+	p.id = rand.Intn(100)               // Random server id.
+	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
 	setupRPC(&p, port)
 	connectToAcceptors(&p)
@@ -81,49 +87,104 @@ func connectToAcceptors(p *proposerObj) {
 	}
 }
 
-func chooseProposalNumber(p *proposerObj) int {
-	// TODO:
-	return 0
+func generateProposal(p *proposerObj) *acceptorrpc.Proposal {
+	p.maxProposalNumber++
+	return &acceptorrpc.Proposal{
+		Number: p.maxProposalNumber,
+		ID:     p.id,
+	}
 }
 
-func sendPrepare(p *proposerObj, client *rpc.Client, proposalNumber int) acceptorrpc.PrepareReply {
-	// TODO:
+func sendPrepare(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Proposal) acceptorrpc.PrepareReply {
+	request := &acceptorrpc.PrepareArgs{
+		Proposal: *proposal,
+	}
+	var reply acceptorrpc.PrepareReply
+	err := client.Call("AcceptorObj.Prepare", request, &reply)
+	if err != nil {
+		LOGE.Println("rpc error:", err)
+	}
 	return acceptorrpc.PrepareReply{}
 }
 
-func sendAccept(p *proposerObj, client *rpc.Client, proposalNumber int,
+func sendAccept(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Proposal,
 	acceptedMessage *proposerrpc.Message) acceptorrpc.AcceptReply {
-	// TODO:
+	request := &acceptorrpc.AcceptArgs{
+		Proposal:        *proposal,
+		ProposalMessage: *acceptedMessage,
+	}
+	var reply acceptorrpc.AcceptReply
+	err := client.Call("AcceptorObj.Accept", request, &reply)
+	if err != nil {
+		LOGE.Println("rpc error:", err)
+	}
 	return acceptorrpc.AcceptReply{}
 }
 
 // Continuously reads messages from queue and Paxos' them
 func processMessages(p *proposerObj) {
+	//for {
+	message := <-p.messageQueue
 	for {
-		message := <-p.messageQueue
-		for {
-			proposalNumber := chooseProposalNumber(p)
+		proposal := generateProposal(p)
 
-			// Send prepares.
-			acceptedMessage := message
-			for _, a := range p.acceptorList {
-				// Send prepare message to all the acceptors
-				prepareReply := sendPrepare(p, a, proposalNumber)
-				if prepareReply.AcceptedMessage.Message != "" {
+		// Send prepares. TODO: needs to be done async since nodes might go down.
+		acceptedMessage := message
+		acceptedProposalNumber := -1
+		cancelCount := 0
+		highestCancelProposalNumber := -1
+		for _, a := range p.acceptorList {
+			// Send prepare message to all the acceptors
+			prepareReply := sendPrepare(p, a, proposal)
+			if prepareReply.Status == acceptorrpc.OK {
+				// nothing
+			} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
+				if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
 					acceptedMessage = &prepareReply.AcceptedMessage
-					break
+					acceptedProposalNumber = prepareReply.AcceptedProposalNumber
 				}
-			}
-
-			// Send accepts.
-			for _, a := range p.acceptorList {
-				acceptReply := sendAccept(p, a, proposalNumber, acceptedMessage)
-				if acceptReply.MinProposal > proposalNumber {
-					break
+			} else if prepareReply.Status == acceptorrpc.CANCEL {
+				cancelCount++
+				if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
+					highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
 				}
+			} else {
+				// ASSERT FALSE should never happen
 			}
 		}
+
+		// If a majority have not accepted - this is not the leader
+		// Try again.
+		if cancelCount >= len(p.acceptorList)/2 {
+			p.maxProposalNumber = highestCancelProposalNumber
+			continue
+		}
+
+		// LEADER. Send accepts.
+		cancelCount = 0
+		highestCancelProposalNumber = -1
+		for _, a := range p.acceptorList {
+			acceptReply := sendAccept(p, a, proposal, acceptedMessage)
+			if acceptReply.Status == acceptorrpc.OK {
+
+			} else if acceptReply.Status == acceptorrpc.CANCEL {
+				cancelCount++
+				if acceptReply.MinProposalNumber >= highestCancelProposalNumber {
+					highestCancelProposalNumber = acceptReply.MinProposalNumber
+				}
+			} else {
+				// ASSERT FALSE should never happen
+			}
+		}
+
+		if cancelCount >= len(p.acceptorList)/2 {
+			p.maxProposalNumber = highestCancelProposalNumber
+			continue
+		}
+
+		break // some value has been chosen.
 	}
+	//}
 }
 
 func setupRPC(a *proposerObj, port int) {
