@@ -40,7 +40,7 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	//setupRPC(&p, port)
+	setupRPC(&p, port)
 	connectToAcceptors(&p)
 	go processMessages(&p) // start processing incoming messa
 	return &p
