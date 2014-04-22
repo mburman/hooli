@@ -9,11 +9,10 @@ import (
 	"strings"
 )
 
-const defaultPort = 9009
+const defaultProposerPort = 9009
 
 var (
-	nodePort = flag.Int("port", defaultPort, "port number for accepter to listen on")
-	nodeID   = flag.Uint("id", 0, "unique id to be used as lower order bits of the proposal number")
+	proposerPort = flag.Int("pport", defaultProposerPort, "port number for proposer to listen on")
 )
 
 type ports []string
@@ -43,21 +42,17 @@ func init() {
 
 func printFlags() {
 	fmt.Println("Arguments...")
-	fmt.Println("nodePort: ", *nodePort)
+	fmt.Println("nodePort: ", *proposerPort)
 	for _, port := range acceptorPorts {
 		fmt.Println("Acceptor port: ", port)
 	}
-	fmt.Println("nodeID: ", *nodeID)
 }
 
 func main() {
 	flag.Parse()
 	printFlags()
 
-	// START UP ACCEPTOR RPC SERVER.
-	//a := acceptor.NewAcceptor(*nodePort)
-	// START LISTENING FOR MESSAGES FROM CLIENTS.
-
-	proposer.NewProposer(*nodePort, nil)
+	fmt.Println("Starting up proposer.")
+	proposer.NewProposer(*proposerPort, acceptorPorts)
 	select {}
 }

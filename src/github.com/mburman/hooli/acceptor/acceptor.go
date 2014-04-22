@@ -31,6 +31,7 @@ func NewAcceptor(port int) *acceptorObj {
 }
 
 func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.PrepareReply) error {
+	fmt.Println("Received Prepare")
 	if args.Proposal.Number < a.minProposal.Number {
 		reply.Status = acceptorrpc.CANCEL
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
@@ -50,6 +51,7 @@ func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.
 }
 
 func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.AcceptReply) error {
+	fmt.Println("Received Accept.")
 	if args.Proposal.Number < a.minProposal.Number {
 		reply.Status = acceptorrpc.CANCEL
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
@@ -70,6 +72,7 @@ func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.Co
 }
 
 func setupRPC(a *acceptorObj, port int) {
+	fmt.Println("Acceptor rpc:", port)
 	rpc.RegisterName("AcceptorObj", a)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", fmt.Sprintf(":%d", port))

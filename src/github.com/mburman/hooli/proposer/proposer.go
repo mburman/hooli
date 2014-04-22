@@ -20,7 +20,7 @@ var LOGV = log.New(ioutil.Discard, "VERBOSE ", log.Lmicroseconds|log.Lshortfile)
 
 type proposerObj struct {
 	port              int
-	acceptorPorts     []int
+	acceptorPorts     []string
 	messageQueue      chan *proposerrpc.Message // messages to be handled
 	messages          []proposerrpc.Message     // list of messages
 	acceptorList      []*rpc.Client
@@ -30,7 +30,7 @@ type proposerObj struct {
 
 // port: port for proposer to listen to client requests on.
 // acceptorPorts: ports contact acceptors on.
-func NewProposer(port int, acceptorPorts []int) *proposerObj {
+func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	var p proposerObj
 	p.port = port
 	p.acceptorPorts = acceptorPorts
@@ -40,7 +40,7 @@ func NewProposer(port int, acceptorPorts []int) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	setupRPC(&p, port)
+	//setupRPC(&p, port)
 	connectToAcceptors(&p)
 	go processMessages(&p) // start processing incoming messa
 	return &p
@@ -49,7 +49,7 @@ func NewProposer(port int, acceptorPorts []int) *proposerObj {
 // Client calls this to post a message.
 func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
 	// Promise to handle. Don't block.
-	fmt.Printf("Received Message:  %+v\n", args.Message)
+	fmt.Printf("Received Message to post:  %+v\n", args.Message)
 	go handleMessage(p, &args.Message)
 	return nil
 }
@@ -66,9 +66,9 @@ func handleMessage(p *proposerObj, message *proposerrpc.Message) {
 
 func connectToAcceptors(p *proposerObj) {
 	// Connect to acceptors.
-	for acceptorPort := range p.acceptorPorts {
+	for _, acceptorPort := range p.acceptorPorts {
 		// Keep redialing till we connect to the server.
-		client, err := rpc.DialHTTP("tcp", fmt.Sprintf(":%d", acceptorPort))
+		client, err := rpc.DialHTTP("tcp", ":"+acceptorPort)
 		if err != nil {
 			LOGE.Println("redialing:", err)
 			dialTicker := time.NewTicker(time.Second)
@@ -76,7 +76,7 @@ func connectToAcceptors(p *proposerObj) {
 			for {
 				select {
 				case <-dialTicker.C:
-					client, err = rpc.DialHTTP("tcp", fmt.Sprintf(":%d", acceptorPort))
+					client, err = rpc.DialHTTP("tcp", ":"+acceptorPort)
 					if err == nil {
 						break DialLoop
 					}
@@ -204,6 +204,7 @@ func processMessages(p *proposerObj) {
 }
 
 func setupRPC(a *proposerObj, port int) {
+	fmt.Println("Proposer rpc:", port)
 	rpc.RegisterName("ProposerObj", a)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -211,4 +212,5 @@ func setupRPC(a *proposerObj, port int) {
 		LOGE.Println("listen error:", e)
 	}
 	go http.Serve(l, nil)
+
 }
