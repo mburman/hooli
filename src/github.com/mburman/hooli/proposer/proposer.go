@@ -104,7 +104,7 @@ func sendPrepare(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Propo
 	if err != nil {
 		LOGE.Println("rpc error:", err)
 	}
-	return acceptorrpc.PrepareReply{}
+	return reply
 }
 
 func sendAccept(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Proposal,
@@ -118,7 +118,19 @@ func sendAccept(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Propos
 	if err != nil {
 		LOGE.Println("rpc error:", err)
 	}
-	return acceptorrpc.AcceptReply{}
+	return reply
+}
+
+func sendCommit(p *proposerObj, client *rpc.Client, message *proposerrpc.Message) acceptorrpc.CommitReply {
+	request := &acceptorrpc.CommitArgs{
+		Message: *message,
+	}
+	var reply acceptorrpc.CommitReply
+	err := client.Call("AcceptorObj.Commit", request, &reply)
+	if err != nil {
+		LOGE.Println("rpc error:", err)
+	}
+	return reply
 }
 
 // Continuously reads messages from queue and Paxos' them
@@ -182,6 +194,10 @@ func processMessages(p *proposerObj) {
 			continue
 		}
 
+		// Value has been chosen.
+		for _, a := range p.acceptorList {
+			sendCommit(p, a, acceptedMessage)
+		}
 		break // some value has been chosen.
 	}
 	//}

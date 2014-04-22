@@ -32,6 +32,10 @@ func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.Ac
 	return nil
 }
 
+func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.CommitReply) error {
+	return nil
+}
+
 func setupRPC(a *acceptorObj, port int) {
 	rpc.RegisterName("AcceptorObj", a)
 	rpc.HandleHTTP()

@@ -38,3 +38,10 @@ type AcceptReply struct {
 	MinProposalNumber int
 	Status            Status
 }
+
+type CommitArgs struct {
+	Message proposerrpc.Message
+}
+
+type CommitReply struct {
+}
