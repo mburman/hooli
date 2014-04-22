@@ -33,20 +33,26 @@ func NewAcceptor(port int) *acceptorObj {
 func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.PrepareReply) error {
 	fmt.Println("Received Prepare")
 	if args.Proposal.Number < a.minProposal.Number {
+		fmt.Println("CANCEL")
 		reply.Status = acceptorrpc.CANCEL
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
+		fmt.Println("CANCEL EQUAL")
 		reply.Status = acceptorrpc.CANCEL
 	} else {
 		if a.minProposal.Number != -1 {
 			// Something was previously accepted.
+			fmt.Println("PREV ACCEPTED")
 			reply.Status = acceptorrpc.PREV_ACCEPTED
 		} else {
+			fmt.Println("OK")
 			reply.Status = acceptorrpc.OK
 		}
 	}
 
 	reply.AcceptedProposalNumber = a.minProposal.Number
-	reply.AcceptedMessage = *a.acceptedMessage
+	if a.acceptedMessage != nil {
+		reply.AcceptedMessage = *a.acceptedMessage
+	}
 	return nil
 }
 

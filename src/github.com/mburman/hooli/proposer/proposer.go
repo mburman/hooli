@@ -143,20 +143,20 @@ func processMessages(p *proposerObj) {
 		// Send prepares. TODO: needs to be done async since nodes might go down.
 		acceptedMessage := message
 		acceptedProposalNumber := -1
-		cancelCount := 0
+		acceptCount := 0
 		highestCancelProposalNumber := -1
 		for _, a := range p.acceptorList {
 			// Send prepare message to all the acceptors
 			prepareReply := sendPrepare(p, a, proposal)
 			if prepareReply.Status == acceptorrpc.OK {
-				// nothing
+				acceptCount++
 			} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
 				if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
 					acceptedMessage = &prepareReply.AcceptedMessage
 					acceptedProposalNumber = prepareReply.AcceptedProposalNumber
 				}
+				acceptCount++
 			} else if prepareReply.Status == acceptorrpc.CANCEL {
-				cancelCount++
 				if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
 					highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
 				}
@@ -167,20 +167,20 @@ func processMessages(p *proposerObj) {
 
 		// If a majority have not accepted - this is not the leader
 		// Try again.
-		if cancelCount >= len(p.acceptorList)/2 {
+		if acceptCount <= len(p.acceptorList)/2 {
 			p.maxProposalNumber = highestCancelProposalNumber
 			continue
 		}
 
+		fmt.Println("Sending accepts")
 		// LEADER. Send accepts.
-		cancelCount = 0
+		acceptCount = 0
 		highestCancelProposalNumber = -1
 		for _, a := range p.acceptorList {
 			acceptReply := sendAccept(p, a, proposal, acceptedMessage)
 			if acceptReply.Status == acceptorrpc.OK {
-
+				acceptCount++
 			} else if acceptReply.Status == acceptorrpc.CANCEL {
-				cancelCount++
 				if acceptReply.MinProposalNumber >= highestCancelProposalNumber {
 					highestCancelProposalNumber = acceptReply.MinProposalNumber
 				}
@@ -189,11 +189,12 @@ func processMessages(p *proposerObj) {
 			}
 		}
 
-		if cancelCount >= len(p.acceptorList)/2 {
+		if acceptCount <= len(p.acceptorList)/2 {
 			p.maxProposalNumber = highestCancelProposalNumber
 			continue
 		}
 
+		fmt.Println("COMMITTING")
 		// Value has been chosen.
 		for _, a := range p.acceptorList {
 			sendCommit(p, a, acceptedMessage)
@@ -212,5 +213,4 @@ func setupRPC(a *proposerObj, port int) {
 		LOGE.Println("listen error:", e)
 	}
 	go http.Serve(l, nil)
-
 }
