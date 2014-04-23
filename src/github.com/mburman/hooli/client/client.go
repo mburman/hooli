@@ -6,6 +6,7 @@ import (
 	"github.com/mburman/hooli/rpc/proposerrpc"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/rpc"
 	"os"
 	"time"
@@ -30,17 +31,24 @@ func main() {
 		client, err = rpc.DialHTTP("tcp", *masterServerHostPort)
 	}
 	LOGE.Println("client dialed successfully")
-	sendMessage(client)
-	time.Sleep(time.Second * 2) // wait for paxos to complete
-	getMessages(client)
+
+	rand.Seed(time.Now().Unix())
+	userid := rand.Int()
+	for i := 0; i <= 10; i++ {
+		fmt.Println("ITERATION: ", i)
+		message := &proposerrpc.Message{
+			Userid:  fmt.Sprintf("%d", userid),
+			Message: fmt.Sprintf("%d", i),
+		}
+		sendMessage(client, message)
+		time.Sleep(time.Second * 2) // wait for paxos to complete
+		getMessages(client)
+	}
 }
 
-func sendMessage(client *rpc.Client) {
+func sendMessage(client *rpc.Client, message *proposerrpc.Message) {
 	request := &proposerrpc.PostMessageArgs{
-		Message: proposerrpc.Message{
-			Userid:  "yoloid",
-			Message: "yolo swag brah",
-		},
+		Message: *message,
 	}
 
 	var reply proposerrpc.PostMessageReply
