@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
+	"sync"
 )
 
 var LOGE = log.New(os.Stderr, "ERROR ", log.Lmicroseconds|log.Lshortfile)
@@ -19,6 +20,7 @@ type acceptorObj struct {
 	minProposal     *acceptorrpc.Proposal
 	acceptedMessage *proposerrpc.Message
 	messages        []proposerrpc.Message
+	mutex           *sync.Mutex
 }
 
 // port: port to start the acceptorObj on.
@@ -27,6 +29,7 @@ func NewAcceptor(port int) *acceptorObj {
 	a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
 	a.acceptedMessage = nil
 	a.messages = make([]proposerrpc.Message, 0)
+	a.mutex = &sync.Mutex{}
 
 	setupRPC(&a, port)
 	return &a
@@ -34,6 +37,8 @@ func NewAcceptor(port int) *acceptorObj {
 
 func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.PrepareReply) error {
 	fmt.Println("Received Prepare")
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 	if args.Proposal.Number < a.minProposal.Number {
 		fmt.Println("CANCEL")
 		reply.Status = acceptorrpc.CANCEL
@@ -60,6 +65,8 @@ func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.
 
 func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.AcceptReply) error {
 	fmt.Println("Received Accept.")
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 	if args.Proposal.Number < a.minProposal.Number {
 		reply.Status = acceptorrpc.CANCEL
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
@@ -75,12 +82,20 @@ func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.Ac
 }
 
 func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.CommitReply) error {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 	fmt.Println("Committed message:", args.Message)
 	a.messages = append(a.messages, args.Message)
+
+	// reset counts
+	a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
+	a.acceptedMessage = nil
 	return nil
 }
 
 func (a *acceptorObj) GetMessages(args *acceptorrpc.GetMessagesArgs, reply *acceptorrpc.GetMessagesReply) error {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 	fmt.Println("Getting ", len(a.messages), " messages")
 	reply.Messages = a.messages
 	return nil
