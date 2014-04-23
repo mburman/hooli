@@ -30,7 +30,12 @@ func main() {
 		client, err = rpc.DialHTTP("tcp", *masterServerHostPort)
 	}
 	LOGE.Println("client dialed successfully")
+	sendMessage(client)
+	time.Sleep(time.Second * 2) // wait for paxos to complete
+	getMessages(client)
+}
 
+func sendMessage(client *rpc.Client) {
 	request := &proposerrpc.PostMessageArgs{
 		Message: proposerrpc.Message{
 			Userid:  "yoloid",
@@ -39,10 +44,23 @@ func main() {
 	}
 
 	var reply proposerrpc.PostMessageReply
-	err = client.Call("ProposerObj.PostMessage", request, &reply)
+	err := client.Call("ProposerObj.PostMessage", request, &reply)
+	if err != nil {
+		LOGE.Println("rpc error:", err)
+	}
+}
+
+func getMessages(client *rpc.Client) {
+	request := &proposerrpc.GetMessagesArgs{}
+
+	var reply proposerrpc.GetMessagesReply
+	err := client.Call("ProposerObj.GetMessages", request, &reply)
 	if err != nil {
 		LOGE.Println("rpc error:", err)
 	}
 
-	fmt.Println("Done posting.")
+	fmt.Println("List of messages:")
+	for _, message := range reply.Messages {
+		fmt.Printf("%+v\n", message)
+	}
 }

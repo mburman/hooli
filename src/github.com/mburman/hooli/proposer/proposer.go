@@ -55,8 +55,24 @@ func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *prop
 }
 
 func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *proposerrpc.GetMessagesReply) error {
-	// TODO: algorithm for figuring out nearest.
-	reply.Messages = p.messages
+	LOGV.Println("Getting messages")
+	// Get messages from a storage server (acceptor)
+	if len(p.acceptorList) < 1 {
+		// panic return error
+	}
+
+	client := p.acceptorList[0]
+	request := &acceptorrpc.GetMessagesArgs{
+		Latitude:  args.Latitude,
+		Longitude: args.Longitude,
+		Radius:    args.Radius,
+	}
+	var messagesReply acceptorrpc.GetMessagesReply
+	err := client.Call("AcceptorObj.GetMessages", request, &messagesReply)
+	if err != nil {
+		LOGE.Println("rpc error:", err)
+	}
+	reply.Messages = messagesReply.Messages
 	return nil
 }
 

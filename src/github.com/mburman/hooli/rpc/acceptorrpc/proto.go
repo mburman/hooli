@@ -45,3 +45,13 @@ type CommitArgs struct {
 
 type CommitReply struct {
 }
+
+type GetMessagesArgs struct {
+	Latitude  float64
+	Longitude float64
+	Radius    float64
+}
+
+type GetMessagesReply struct {
+	Messages []proposerrpc.Message
+}
