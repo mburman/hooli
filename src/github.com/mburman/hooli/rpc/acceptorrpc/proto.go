@@ -26,6 +26,7 @@ type PrepareArgs struct {
 type PrepareReply struct {
 	AcceptedProposalNumber int
 	AcceptedMessage        proposerrpc.Message
+	Index                  int
 	Status                 Status
 }
 
@@ -41,6 +42,7 @@ type AcceptReply struct {
 
 type CommitArgs struct {
 	Message proposerrpc.Message
+	Index   int
 }
 
 type CommitReply struct {

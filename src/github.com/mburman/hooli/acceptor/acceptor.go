@@ -19,6 +19,7 @@ var LOGV = log.New(ioutil.Discard, "VERBOSE ", log.Lmicroseconds|log.Lshortfile)
 type acceptorObj struct {
 	minProposal     *acceptorrpc.Proposal
 	acceptedMessage *proposerrpc.Message
+	nextIndex       int
 	messages        []proposerrpc.Message
 	mutex           *sync.Mutex
 	port            int
@@ -32,6 +33,7 @@ func NewAcceptor(port int) *acceptorObj {
 	a.messages = make([]proposerrpc.Message, 0)
 	a.mutex = &sync.Mutex{}
 	a.port = port
+	a.nextIndex = 0
 	setupRPC(&a, port)
 	return &a
 }
@@ -59,6 +61,7 @@ func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.
 		}
 	}
 
+	reply.Index = a.nextIndex
 	reply.AcceptedProposalNumber = a.minProposal.Number
 	return nil
 }
@@ -85,11 +88,25 @@ func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.Co
 	a.mutex.Lock()
 	defer a.mutex.Unlock()
 	fmt.Println("Committed message:", args.Message)
-	a.messages = append(a.messages, args.Message)
+	fmt.Println("Index:", args.Index)
+	// Increase the size of the array if it is too small.
+	if len(a.messages) <= args.Index {
+		temp := a.messages
+		a.messages = make([]proposerrpc.Message, 1+len(a.messages))
+		copy(a.messages, temp)
+	}
+	a.messages[args.Index] = args.Message
+
+	if a.nextIndex == args.Index {
+		a.nextIndex = args.Index + 1
+	} else if a.nextIndex < args.Index {
+		// TODO: missing values... fill
+		a.nextIndex = args.Index + 1
+	}
 
 	// reset counts
-	//a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
-	//a.acceptedMessage = nil
+	a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
+	a.acceptedMessage = nil
 	return nil
 }
 

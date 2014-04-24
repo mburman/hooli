@@ -78,7 +78,7 @@ func main() {
 	//go sendRandomMessagesToRandomClients(clients, 0, done1)
 	//go sendRandomMessagesToRandomClients(clients, 1, done2)
 
-	go sendSingleMessageToAllClients(clients, 0, done1)
+	go sendSingleMessageToAllClients(clients, 1, done1)
 	<-done1
 	//<-done2
 	// Wait for paxos to complete
