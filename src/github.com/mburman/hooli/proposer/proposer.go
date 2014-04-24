@@ -37,6 +37,7 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.messageQueue = make(chan *proposerrpc.Message, 100)
 	p.acceptorList = make([]*rpc.Client, 0)
 
+	rand.Seed(time.Now().Unix())
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
@@ -151,78 +152,79 @@ func sendCommit(p *proposerObj, client *rpc.Client, message *proposerrpc.Message
 
 // Continuously reads messages from queue and Paxos' them
 func processMessages(p *proposerObj) {
+	//for {
+	message := <-p.messageQueue
+	acceptedMessage := message
 	for {
-		message := <-p.messageQueue
-		for {
-			proposal := generateProposal(p)
+		proposal := generateProposal(p)
 
-			// Send prepares. TODO: needs to be done async since nodes might go down.
-			acceptedMessage := message
-			acceptedProposalNumber := -1
-			acceptCount := 0
-			highestCancelProposalNumber := -1
-			messageSent := true
-			for _, a := range p.acceptorList {
-				// Send prepare message to all the acceptors
-				prepareReply := sendPrepare(p, a, proposal)
-				if prepareReply.Status == acceptorrpc.OK {
-					acceptCount++
-				} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
-					if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
-						acceptedMessage = &prepareReply.AcceptedMessage
-						acceptedProposalNumber = prepareReply.AcceptedProposalNumber
-						messageSent = false
-					}
-					acceptCount++
-				} else if prepareReply.Status == acceptorrpc.CANCEL {
-					if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
-						highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
-					}
-				} else {
-					// ASSERT FALSE should never happen
+		// Send prepares. TODO: needs to be done async since nodes might go down.
+		acceptedProposalNumber := -1
+		acceptCount := 0
+		highestCancelProposalNumber := -1
+		messageSent := true
+		for _, a := range p.acceptorList {
+			// Send prepare message to all the acceptors
+			prepareReply := sendPrepare(p, a, proposal)
+			if prepareReply.Status == acceptorrpc.OK {
+				acceptCount++
+			} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
+				if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
+					acceptedMessage = &prepareReply.AcceptedMessage
+					acceptedProposalNumber = prepareReply.AcceptedProposalNumber
+					messageSent = false
 				}
-			}
-
-			// If a majority have not accepted - this is not the leader
-			// Try again.
-			if acceptCount <= len(p.acceptorList)/2 {
-				p.maxProposalNumber = highestCancelProposalNumber
-				continue
-			}
-
-			fmt.Println("Sending accepts")
-			// LEADER. Send accepts.
-			acceptCount = 0
-			highestCancelProposalNumber = -1
-			for _, a := range p.acceptorList {
-				acceptReply := sendAccept(p, a, proposal, acceptedMessage)
-				if acceptReply.Status == acceptorrpc.OK {
-					acceptCount++
-				} else if acceptReply.Status == acceptorrpc.CANCEL {
-					if acceptReply.MinProposalNumber >= highestCancelProposalNumber {
-						highestCancelProposalNumber = acceptReply.MinProposalNumber
-					}
-				} else {
-					// ASSERT FALSE should never happen
+				acceptCount++
+			} else if prepareReply.Status == acceptorrpc.CANCEL {
+				if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
+					highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
 				}
-			}
-
-			if acceptCount <= len(p.acceptorList)/2 {
-				p.maxProposalNumber = highestCancelProposalNumber
-				continue
-			}
-
-			fmt.Println("COMMITTING")
-			// Value has been chosen.
-			for _, a := range p.acceptorList {
-				sendCommit(p, a, acceptedMessage)
-			}
-
-			if messageSent {
-				break // get a new message.
+			} else {
+				// ASSERT FALSE should never happen
 			}
 		}
+
+		// If a majority have not accepted - this is not the leader
+		// Try again.
+		if acceptCount <= len(p.acceptorList)/2 {
+			p.maxProposalNumber = highestCancelProposalNumber
+			continue
+		}
+
+		fmt.Println("Sending accepts")
+		// LEADER. Send accepts.
+		acceptCount = 0
+		highestCancelProposalNumber = -1
+		for _, a := range p.acceptorList {
+			acceptReply := sendAccept(p, a, proposal, acceptedMessage)
+			if acceptReply.Status == acceptorrpc.OK {
+				acceptCount++
+			} else if acceptReply.Status == acceptorrpc.CANCEL {
+				if acceptReply.MinProposalNumber >= highestCancelProposalNumber {
+					highestCancelProposalNumber = acceptReply.MinProposalNumber
+				}
+			} else {
+				// ASSERT FALSE should never happen
+			}
+		}
+
+		if acceptCount <= len(p.acceptorList)/2 {
+			p.maxProposalNumber = highestCancelProposalNumber
+			continue
+		}
+
+		fmt.Println("COMMITTING")
+		// Value has been chosen.
+		for _, a := range p.acceptorList {
+			sendCommit(p, a, acceptedMessage)
+		}
+
+		messageSent = messageSent
+		//if messageSent {
+		break // get a new message.
+		//}
 	}
+	//}
 }
 
 func setupRPC(a *proposerObj, port int) {

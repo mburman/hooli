@@ -21,6 +21,7 @@ type acceptorObj struct {
 	acceptedMessage *proposerrpc.Message
 	messages        []proposerrpc.Message
 	mutex           *sync.Mutex
+	port            int
 }
 
 // port: port to start the acceptorObj on.
@@ -30,36 +31,35 @@ func NewAcceptor(port int) *acceptorObj {
 	a.acceptedMessage = nil
 	a.messages = make([]proposerrpc.Message, 0)
 	a.mutex = &sync.Mutex{}
-
+	a.port = port
 	setupRPC(&a, port)
 	return &a
 }
 
 func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.PrepareReply) error {
-	fmt.Println("Received Prepare")
+	fmt.Println("Received Prepare", args)
 	a.mutex.Lock()
 	defer a.mutex.Unlock()
 	if args.Proposal.Number < a.minProposal.Number {
-		fmt.Println("CANCEL")
+		fmt.Println("CANCEL", a.port)
 		reply.Status = acceptorrpc.CANCEL
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
-		fmt.Println("CANCEL EQUAL")
+		fmt.Println("CANCEL EQUAL", a.port)
 		reply.Status = acceptorrpc.CANCEL
 	} else {
-		if a.minProposal.Number != -1 {
+		if a.acceptedMessage != nil {
 			// Something was previously accepted.
-			fmt.Println("PREV ACCEPTED")
+			fmt.Println("PREV ACCEPTED", a.port)
 			reply.Status = acceptorrpc.PREV_ACCEPTED
+			reply.AcceptedMessage = *a.acceptedMessage
 		} else {
-			fmt.Println("OK")
+			fmt.Println("OK", a.port)
 			reply.Status = acceptorrpc.OK
+			a.minProposal = &args.Proposal
 		}
 	}
 
 	reply.AcceptedProposalNumber = a.minProposal.Number
-	if a.acceptedMessage != nil {
-		reply.AcceptedMessage = *a.acceptedMessage
-	}
 	return nil
 }
 
@@ -88,8 +88,8 @@ func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.Co
 	a.messages = append(a.messages, args.Message)
 
 	// reset counts
-	a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
-	a.acceptedMessage = nil
+	//a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
+	//a.acceptedMessage = nil
 	return nil
 }
 

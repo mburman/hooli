@@ -33,26 +33,29 @@ ARUNNER_PORT2=$(((RANDOM % 10000) + 10000))
 ARUNNER=$GOPATH/bin/arunner
 PRUNNER=$GOPATH/bin/prunner
 TEST=$GOPATH/bin/tests
-
+OUT_FILE1=./out1
+OUT_FILE2=./out2
+OUT_FILE3=./out3
+OUT_FILE4=./out4
 ##################################################
 
 # Start prunner 1
-${ARUNNER} -aport=${ARUNNER_PORT1} &> /dev/null &
+${ARUNNER} -aport=${ARUNNER_PORT1} &> ${OUT_FILE1} &
 ARUNNER_PID1=$!
 sleep 1
 
 # Start prunner 2
-${ARUNNER} -aport=${ARUNNER_PORT2} &> /dev/null &
+${ARUNNER} -aport=${ARUNNER_PORT2} &> ${OUT_FILE2} &
 ARUNNER_PID2=$!
 sleep 1
 
 # Start prunner 1
-${PRUNNER} -pport=${PRUNNER_PORT1} -ports=${ARUNNER_PORT1},${ARUNNER_PORT2} &> /dev/null &
+${PRUNNER} -pport=${PRUNNER_PORT1} -ports=${ARUNNER_PORT1},${ARUNNER_PORT2} &> ${OUT_FILE3} &
 PRUNNER_PID1=$!
 sleep 1
 
 # Start prunner 2
-${PRUNNER} -pport=${PRUNNER_PORT2} -ports=${ARUNNER_PORT2},${ARUNNER_PORT1} &> /dev/null &
+${PRUNNER} -pport=${PRUNNER_PORT2} -ports=${ARUNNER_PORT2},${ARUNNER_PORT1} &> ${OUT_FILE4} &
 PRUNNER_PID2=$!
 sleep 1
 

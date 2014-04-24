@@ -74,12 +74,13 @@ func main() {
 	// Send a bunch of random messages to random proposers
 	rand.Seed(time.Now().Unix())
 	done1 := make(chan int)
-	done2 := make(chan int)
-	go sendRandomMessagesToRandomClients(clients, 0, done1)
-	go sendRandomMessagesToRandomClients(clients, 1, done2)
+	//done2 := make(chan int)
+	//go sendRandomMessagesToRandomClients(clients, 0, done1)
+	//go sendRandomMessagesToRandomClients(clients, 1, done2)
 
+	go sendSingleMessageToAllClients(clients, 0, done1)
 	<-done1
-	<-done2
+	//<-done2
 	// Wait for paxos to complete
 	time.Sleep(time.Second * 5)
 
@@ -130,6 +131,20 @@ func areMessagesEqual(message1 *proposerrpc.Message, message2 *proposerrpc.Messa
 		return true
 	}
 	return false
+}
+
+func sendSingleMessageToAllClients(clients []*rpc.Client, delay int, done chan int) {
+	for i := 0; i < len(clients); i++ {
+		userid := rand.Int()
+		fmt.Println("Sending message to client:", i)
+		message := &proposerrpc.Message{
+			Userid:  fmt.Sprintf("%d", userid),
+			Message: fmt.Sprintf("%d", i),
+		}
+		sendMessage(clients[i], message)
+		time.Sleep(time.Second * time.Duration(delay)) // wait for paxos to complete
+	}
+	close(done)
 }
 
 func sendRandomMessagesToRandomClients(clients []*rpc.Client, delay int, done chan int) {
