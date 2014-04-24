@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"net/rpc/jsonrpc"
 	"os"
 	"time"
 )
@@ -40,7 +41,7 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	setupRPC(&p, port)
+	go setupJSONRPC(p, port)
 	connectToAcceptors(&p)
 	go processMessages(&p) // start processing incoming messa
 	return &p
@@ -234,4 +235,30 @@ func setupRPC(a *proposerObj, port int) {
 		LOGE.Println("listen error:", e)
 	}
 	go http.Serve(l, nil)
+}
+
+func setupJSONRPC(a proposerObj, port int) {
+	server := rpc.NewServer()
+	server.RegisterName("ProposerObj", &a)
+	server.HandleHTTP(rpc.DefaultRPCPath, rpc.DefaultDebugPath)
+	l, e := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if e != nil {
+		LOGE.Println("listen error in setupJSONRPC:", e)
+	}
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			LOGE.Println("error accepting conn in setupJSONRPC:", err)
+			fmt.Println("error with connection")
+		} else {
+			fmt.Println("accepted connection")
+		}
+//		go server.ServeCodec(jsonrpc.NewServerCodec(conn))
+		err = server.ServeRequest(jsonrpc.NewServerCodec(conn))
+		if err != nil {
+			LOGE.Println("error serving request in setupJSONRPC:", err)
+			fmt.Println("error serving request: ", err)
+		}
+//		go jsonrpc.ServeConn(conn)
+	}
 }
