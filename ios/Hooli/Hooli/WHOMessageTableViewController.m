@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 whoisdylan. All rights reserved.
 //
 
+#import "AFNetworking/AFNetworking.h"
+#import "AFJSONRPCClient/AFJSONRPCClient.h"
 #import "WHOMessageTableViewController.h"
 #import "WHONewMessageViewController.h"
 #import "WHOMessage.h"
