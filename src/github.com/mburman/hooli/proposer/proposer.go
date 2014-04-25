@@ -156,6 +156,8 @@ func processMessages(p *proposerObj) {
 	for {
 		message := <-p.messageQueue
 		for {
+			delayMills := rand.Intn(100) // Random delay to avoid conflicts.
+			time.Sleep(time.Millisecond * time.Duration(delayMills))
 			proposal := generateProposal(p)
 
 			// Send prepares. TODO: needs to be done async since nodes might go down.
@@ -165,33 +167,33 @@ func processMessages(p *proposerObj) {
 			highestIndex := 0
 			acceptedMessage := message
 			messageSent := true
-
+			acceptedIndex := -1
 			for _, a := range p.acceptorList {
 				// Send prepare message to all the acceptors
 				prepareReply := sendPrepare(p, a, proposal)
 				if prepareReply.Status == acceptorrpc.OK {
-
+					if highestIndex < prepareReply.Index {
+						highestIndex = prepareReply.Index
+					}
 					acceptCount++
 				} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
 					if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
 						acceptedMessage = &prepareReply.AcceptedMessage
 						acceptedProposalNumber = prepareReply.AcceptedProposalNumber
 						messageSent = false
+						acceptedIndex = prepareReply.Index
 					}
-					acceptCount++
+					//acceptCount++
 				} else if prepareReply.Status == acceptorrpc.CANCEL {
 					if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
 						highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
 					}
-				} else {
-					// ASSERT FALSE should never happen
-				}
-
-				if highestIndex < prepareReply.Index {
-					highestIndex = prepareReply.Index
 				}
 			}
 
+			if messageSent == false {
+				highestIndex = acceptedIndex
+			}
 			// If a majority have not accepted - this is not the leader
 			// Try again.
 			if acceptCount <= len(p.acceptorList)/2 {

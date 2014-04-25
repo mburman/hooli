@@ -57,10 +57,10 @@ func (a *acceptorObj) Prepare(args *acceptorrpc.PrepareArgs, reply *acceptorrpc.
 		} else {
 			fmt.Println("OK", a.port)
 			reply.Status = acceptorrpc.OK
-			a.minProposal = &args.Proposal
 		}
 	}
 
+	a.minProposal = &args.Proposal
 	reply.Index = a.nextIndex
 	reply.AcceptedProposalNumber = a.minProposal.Number
 	return nil
@@ -99,9 +99,11 @@ func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.Co
 
 	if a.nextIndex == args.Index {
 		a.nextIndex = args.Index + 1
+		fmt.Println("Incrementing")
 	} else if a.nextIndex < args.Index {
 		// TODO: missing values... fill
 		a.nextIndex = args.Index + 1
+		fmt.Println("Incrementing")
 	}
 
 	// reset counts

@@ -75,10 +75,10 @@ func main() {
 	rand.Seed(time.Now().Unix())
 	done1 := make(chan int)
 	//done2 := make(chan int)
-	//go sendRandomMessagesToRandomClients(clients, 0, done1)
+	go sendRandomMessagesToRandomClients(clients, 0, done1)
 	//go sendRandomMessagesToRandomClients(clients, 1, done2)
 
-	go sendSingleMessageToAllClients(clients, 1, done1)
+	//go sendSingleMessageToAllClients(clients, 0, done1)
 	<-done1
 	//<-done2
 	// Wait for paxos to complete
@@ -148,7 +148,7 @@ func sendSingleMessageToAllClients(clients []*rpc.Client, delay int, done chan i
 }
 
 func sendRandomMessagesToRandomClients(clients []*rpc.Client, delay int, done chan int) {
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 50; i++ {
 		proposerToContact := rand.Intn(len(clients)) // pick a random client
 		userid := rand.Int()
 		fmt.Println("Sending message to client:", proposerToContact)
