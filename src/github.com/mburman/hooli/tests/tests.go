@@ -148,7 +148,7 @@ func sendSingleMessageToAllClients(clients []*rpc.Client, delay int, done chan i
 }
 
 func sendRandomMessagesToRandomClients(clients []*rpc.Client, delay int, done chan int) {
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 100; i++ {
 		proposerToContact := rand.Intn(len(clients)) // pick a random client
 		userid := rand.Int()
 		fmt.Println("Sending message to client:", proposerToContact)

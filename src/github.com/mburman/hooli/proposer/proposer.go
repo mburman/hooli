@@ -156,18 +156,14 @@ func processMessages(p *proposerObj) {
 	for {
 		message := <-p.messageQueue
 		for {
-			delayMills := rand.Intn(100) // Random delay to avoid conflicts.
+			delayMills := rand.Intn(75) // Random delay to avoid conflicts.
 			time.Sleep(time.Millisecond * time.Duration(delayMills))
 			proposal := generateProposal(p)
 
 			// Send prepares. TODO: needs to be done async since nodes might go down.
-			acceptedProposalNumber := -1
 			acceptCount := 0
 			highestCancelProposalNumber := -1
 			highestIndex := 0
-			acceptedMessage := message
-			messageSent := true
-			acceptedIndex := -1
 			for _, a := range p.acceptorList {
 				// Send prepare message to all the acceptors
 				prepareReply := sendPrepare(p, a, proposal)
@@ -177,13 +173,7 @@ func processMessages(p *proposerObj) {
 					}
 					acceptCount++
 				} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
-					if acceptedProposalNumber < prepareReply.AcceptedProposalNumber {
-						acceptedMessage = &prepareReply.AcceptedMessage
-						acceptedProposalNumber = prepareReply.AcceptedProposalNumber
-						messageSent = false
-						acceptedIndex = prepareReply.Index
-					}
-					//acceptCount++
+					// IGNORE...
 				} else if prepareReply.Status == acceptorrpc.CANCEL {
 					if prepareReply.AcceptedProposalNumber >= highestCancelProposalNumber {
 						highestCancelProposalNumber = prepareReply.AcceptedProposalNumber
@@ -191,9 +181,6 @@ func processMessages(p *proposerObj) {
 				}
 			}
 
-			if messageSent == false {
-				highestIndex = acceptedIndex
-			}
 			// If a majority have not accepted - this is not the leader
 			// Try again.
 			if acceptCount <= len(p.acceptorList)/2 {
@@ -206,7 +193,7 @@ func processMessages(p *proposerObj) {
 			acceptCount = 0
 			highestCancelProposalNumber = -1
 			for _, a := range p.acceptorList {
-				acceptReply := sendAccept(p, a, proposal, acceptedMessage)
+				acceptReply := sendAccept(p, a, proposal, message)
 				if acceptReply.Status == acceptorrpc.OK {
 					acceptCount++
 				} else if acceptReply.Status == acceptorrpc.CANCEL {
@@ -226,12 +213,10 @@ func processMessages(p *proposerObj) {
 			fmt.Println("COMMITTING")
 			// Value has been chosen.
 			for _, a := range p.acceptorList {
-				sendCommit(p, a, acceptedMessage, highestIndex)
+				sendCommit(p, a, message, highestIndex)
 			}
 
-			if messageSent {
-				break // get a new message.
-			}
+			break // get a new message.
 		}
 	}
 }
