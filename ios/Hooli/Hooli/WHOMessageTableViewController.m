@@ -80,15 +80,34 @@
 }
 
 - (void)receivedNewMessage:(NSString *)message {
+//    NSLog(@"received new message %@",message);
 //    WHOMessage* messageObj = [[WHOMessage alloc] initWithMessage:message Author:self.userName Location:self.userLocation];
-    NSString* latitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.latitude];
-    NSString* longitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.longitude];
+//    NSString* latitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.latitude];
+//    NSString* longitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.longitude];
     //TODO send message to server
+    /*
     AFJSONRPCClient* client = [AFJSONRPCClient clientWithEndpointURL:[NSURL URLWithString:@"http://192.168.1.13:9009"]];
     [client invokeMethod:@"ProposerObj.PostMessage" withParameters:@{@"Message" : message, @"Author" : self.userName, @"Latitude" : latitude, @"Longitude" : longitude} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"succeeded to send request to server");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"failed to send request to server with error %@", error);
+    }];
+     */
+    
+    //using REST
+    NSURL* baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
+    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
+    
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];
+//    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
+    [manager POST:@"messages" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"REST success!");
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"REST failure wih error: %@", error);
     }];
 }
 

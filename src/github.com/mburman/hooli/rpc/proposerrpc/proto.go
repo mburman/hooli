@@ -1,12 +1,14 @@
 package proposerrpc
 
+
 type Message struct {
-	Latitude  float64
-	Longitude float64
-	Message   string
-	Userid    string
+	Latitude  float32
+	Longitude float32
+	MessageText   string
+	Author    string
 	Timestamp string
 }
+
 
 type GetMessagesArgs struct {
 	Latitude  float64

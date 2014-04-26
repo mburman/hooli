@@ -14,6 +14,7 @@ import (
 	"net/rpc/jsonrpc"
 	"os"
 	"time"
+	"code.google.com/p/gorest"
 )
 
 var LOGE = log.New(os.Stderr, "ERROR ", log.Lmicroseconds|log.Lshortfile)
@@ -27,6 +28,9 @@ type proposerObj struct {
 	acceptorList      []*rpc.Client
 	maxProposalNumber int // max proposal number server has seen
 	id                int // proposer id
+	//REST things
+	gorest.RestService `root:"/proposer/" consumes:"application/json" produces:"application/json"`
+	postMessage gorest.EndPoint `method:"POST" path:"/messages/" postdata:"Message"`
 }
 
 // port: port for proposer to listen to client requests on.
@@ -41,19 +45,43 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	go setupJSONRPC(p, port)
+//	go setupJSONRPC(p, port)
+	go setupREST(p, port)
 	connectToAcceptors(&p)
 	go processMessages(&p) // start processing incoming messa
 	return &p
 }
 
+type Message struct {
+	Latitude  float64
+	Longitude float64
+	MessageText   string
+	Author    string
+}
+
+//REST method handler for posting message
+func(serv proposerObj) PostMessage(PostData Message){
+	// Promise to handle. Don't block.
+	fmt.Printf("Received Message to post:  %+v\n", PostData)
+	rpcMess := new(proposerrpc.Message)
+	rpcMess.MessageText = PostData.MessageText
+	rpcMess.Author = PostData.Author
+//	rpcMess.Latitude = PostData.Latitude
+//	rpcMess.Longitude = PostData.Longitude
+	go handleMessage(&serv, rpcMess)
+//	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
+	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
+}
+
 // Client calls this to post a message.
+/*
 func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
 	// Promise to handle. Don't block.
 	fmt.Printf("Received Message to post:  %+v\n", args.Message)
 	go handleMessage(p, &args.Message)
 	return nil
 }
+*/
 
 func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *proposerrpc.GetMessagesReply) error {
 	LOGV.Println("Getting messages")
@@ -261,4 +289,10 @@ func setupJSONRPC(a proposerObj, port int) {
 		}
 //		go jsonrpc.ServeConn(conn)
 	}
+}
+
+func setupREST(a proposerObj, port int) {
+	gorest.RegisterService(&a)
+	http.Handle("/",gorest.Handle())
+	http.ListenAndServe(fmt.Sprintf(":%d", port),nil)
 }
