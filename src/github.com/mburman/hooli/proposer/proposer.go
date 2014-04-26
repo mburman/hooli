@@ -28,8 +28,10 @@ type proposerObj struct {
 	acceptorList      []*rpc.Client
 	maxProposalNumber int // max proposal number server has seen
 	id                int // proposer id
+
 	//REST things
 	gorest.RestService `root:"/proposer/" consumes:"application/json" produces:"application/json"`
+	listMessages gorest.EndPoint `method:"GET" path:"/items/" output:"[]Message"`
 	postMessage gorest.EndPoint `method:"POST" path:"/messages/" postdata:"Message"`
 }
 
@@ -66,11 +68,15 @@ func(serv proposerObj) PostMessage(PostData Message){
 	rpcMess := new(proposerrpc.Message)
 	rpcMess.MessageText = PostData.MessageText
 	rpcMess.Author = PostData.Author
-//	rpcMess.Latitude = PostData.Latitude
-//	rpcMess.Longitude = PostData.Longitude
+	rpcMess.Latitude = PostData.Latitude
+	rpcMess.Longitude = PostData.Longitude
 	go handleMessage(&serv, rpcMess)
 //	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
 	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
+}
+
+func(serv proposerObj) ListMessages() []proposerrpc.Message {
+	return serv.messages
 }
 
 // Client calls this to post a message.
