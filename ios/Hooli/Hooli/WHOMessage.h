@@ -12,6 +12,8 @@
 @interface WHOMessage : NSObject
 
 - (instancetype) initWithMessage:(NSString* )message Author:(NSString* )author Location:(CLLocation *)location;
+-(BOOL)isEqual:(id)object;
+//-(BOOL)isEqualToObject:(WHOMessage* )object;
 @property (nonatomic, strong) NSString* message;
 @property (nonatomic, strong) NSString* author;
 @property (nonatomic, strong) CLLocation* location;

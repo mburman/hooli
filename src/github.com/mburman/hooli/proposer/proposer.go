@@ -11,8 +11,10 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"net/rpc/jsonrpc"
 	"os"
 	"time"
+	"code.google.com/p/gorest"
 )
 
 var LOGE = log.New(os.Stderr, "ERROR ", log.Lmicroseconds|log.Lshortfile)
@@ -26,6 +28,11 @@ type proposerObj struct {
 	acceptorList      []*rpc.Client
 	maxProposalNumber int // max proposal number server has seen
 	id                int // proposer id
+
+	//REST things
+	gorest.RestService `root:"/proposer/" consumes:"application/json" produces:"application/json"`
+	listMessages gorest.EndPoint `method:"GET" path:"/messages/" output:"[]Message"`
+	postMessage gorest.EndPoint `method:"POST" path:"/messages/" postdata:"Message"`
 }
 
 // port: port for proposer to listen to client requests on.
@@ -41,19 +48,60 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	setupRPC(&p, port)
+//	go setupJSONRPC(p, port)
+	go setupREST(p, port)
 	connectToAcceptors(&p)
 	go processMessages(&p) // start processing incoming messa
 	return &p
 }
 
+type Message struct {
+	Latitude  float64
+	Longitude float64
+	MessageText   string
+	Author    string
+}
+
+//REST method handler for posting message
+func(serv proposerObj) PostMessage(PostData Message){
+	// Promise to handle. Don't block.
+	fmt.Printf("Received Message to post:  %+v\n", PostData)
+	rpcMess := new(proposerrpc.Message)
+	rpcMess.MessageText = PostData.MessageText
+	rpcMess.Author = PostData.Author
+	rpcMess.Latitude = PostData.Latitude
+	rpcMess.Longitude = PostData.Longitude
+	go handleMessage(&serv, rpcMess)
+//	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
+	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
+}
+
+func(serv proposerObj) ListMessages() []Message {
+	fmt.Printf("Received request for messages\n");
+	messArray := make([]Message,0)
+	for _,v := range serv.messages {
+		mess := new(Message)
+		mess.MessageText = v.MessageText
+		mess.Latitude = v.Latitude
+		mess.Longitude = v.Latitude
+		mess.Author = v.Author
+		messArray = append(messArray, *mess)
+	}
+//	messArray = append(messArray,Message{Latitude:37.33233141,Longitude:-122.03121860,MessageText:"test1",Author:"Dylan Koenig"})
+//	messArray = append(messArray,Message{Latitude:37.33233141,Longitude:-122.03121860,MessageText:"test2",Author:"Dylan Koenig"})
+//	fmt.Println("messages:",messArray)
+	return messArray
+}
+
 // Client calls this to post a message.
+/*
 func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
 	// Promise to handle. Don't block.
 	fmt.Printf("Received Message to post:  %+v\n", args.Message)
 	go handleMessage(p, &args.Message)
 	return nil
 }
+*/
 
 func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *proposerrpc.GetMessagesReply) error {
 	LOGV.Println("Getting messages")
@@ -230,4 +278,36 @@ func setupRPC(a *proposerObj, port int) {
 		LOGE.Println("listen error:", e)
 	}
 	go http.Serve(l, nil)
+}
+
+func setupJSONRPC(a proposerObj, port int) {
+	server := rpc.NewServer()
+	server.RegisterName("ProposerObj", &a)
+	server.HandleHTTP(rpc.DefaultRPCPath, rpc.DefaultDebugPath)
+	l, e := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if e != nil {
+		LOGE.Println("listen error in setupJSONRPC:", e)
+	}
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			LOGE.Println("error accepting conn in setupJSONRPC:", err)
+			fmt.Println("error with connection")
+		} else {
+			fmt.Println("accepted connection")
+		}
+//		go server.ServeCodec(jsonrpc.NewServerCodec(conn))
+		err = server.ServeRequest(jsonrpc.NewServerCodec(conn))
+		if err != nil {
+			LOGE.Println("error serving request in setupJSONRPC:", err)
+			fmt.Println("error serving request: ", err)
+		}
+//		go jsonrpc.ServeConn(conn)
+	}
+}
+
+func setupREST(a proposerObj, port int) {
+	gorest.RegisterService(&a)
+	http.Handle("/",gorest.Handle())
+	http.ListenAndServe(fmt.Sprintf(":%d", port),nil)
 }

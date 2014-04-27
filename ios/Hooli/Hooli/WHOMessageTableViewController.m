@@ -7,7 +7,6 @@
 //
 
 #import "AFNetworking/AFNetworking.h"
-#import "AFJSONRPCClient/AFJSONRPCClient.h"
 #import "WHOMessageTableViewController.h"
 #import "WHONewMessageViewController.h"
 #import "WHOMessage.h"
@@ -18,6 +17,8 @@
 @end
 
 @implementation WHOMessageTableViewController
+
+double kMessageRadius = 1.0;
 
 - (id)initWithStyle:(UITableViewStyle)style WithUserName:(NSString* )userName
 {
@@ -57,17 +58,71 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    // TODO load messages from server here
-    
     UIBarButtonItem* newMessageButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newMessage:)];
     self.navigationItem.rightBarButtonItem = newMessageButton;
     
     [self.tableView setRowHeight:150.0];
     [self.tableView registerNib:[UINib nibWithNibName:@"WHOMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"MessageCell"];
+    
+    // TODO load messages from server here
+    [self updateMessageList];
+    [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateMessageList) userInfo:nil repeats:YES];
+}
+
+- (void)updateMessageList {
+    NSLog(@"Updating message list");
+    
+    //using REST
+    NSURL* baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
+//    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
+    
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+//    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+//    [manager.requestSerializer setValue:@"text/html" forHTTPHeaderField:@"Content-Type"];
+    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    
+    [manager GET:@"messages" parameters:NULL success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"REST GET success!");
+        NSLog(@"received response containing: %@", (NSArray*) responseObject);
+        for (NSDictionary* element in responseObject) {
+//            NSLog(@"fieldtest:%@",element[@"Author"]);
+            NSNumber* lat = element[@"Latitude"];
+            NSNumber* lon = element[@"Longitude"];
+            CLLocation* loc = [[CLLocation alloc] initWithLatitude:lat.doubleValue longitude:lon.doubleValue];
+            if ([self isMessageWithinRangeAtLocation:loc]) {
+                WHOMessage* mess = [[WHOMessage alloc] initWithMessage:element[@"MessageText"] Author:element[@"Author"] Location:loc];
+                if (![self.messages containsObject:mess]) {
+                    [self.messages addObject:mess];
+                }
+                /*BOOL messageExists = NO;
+                for (WHOMessage* prevMess in self.messages) {
+                    if ([prevMess isEqualToObject:mess]) {
+                        NSLog(@"message exists!");
+                        messageExists = YES;
+                        break;
+                    }
+                }
+                if (!messageExists) {
+                    NSLog(@"message doesn't exist!");
+                    [self.messages addObject:mess];
+                }*/
+            }
+        }
+        [self.tableView reloadData];
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"REST GET failure wih error: %@", error);
+    }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     CLLocation *currLoc = [locations firstObject];
+//    NSLog(@"User location updated: %@", currLoc);
     self.userLocation = currLoc;
     
 }
@@ -80,13 +135,41 @@
 }
 
 - (void)receivedNewMessage:(NSString *)message {
-    WHOMessage* messageObj = [[WHOMessage alloc] initWithMessage:message Author:self.userName Location:self.userLocation];
+//    NSLog(@"received new message %@",message);
+//    WHOMessage* messageObj = [[WHOMessage alloc] initWithMessage:message Author:self.userName Location:self.userLocation];
+//    NSString* latitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.latitude];
+//    NSString* longitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.longitude];
     
-    //TODO send message to server
+    //using REST
+    NSURL* baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
+    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
+    
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];
+//    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
+    [manager POST:@"messages" parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@"REST POST success!");
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"REST POST failure wih error: %@", error);
+    }];
+}
+
+- (BOOL)isMessageWithinRangeAtLocation:(CLLocation*)location {
+    CLLocationDistance distanceInMeters = fabs([location distanceFromLocation:self.userLocation]);
+    double distanceInMiles = distanceInMeters/1609.344;
+    if (distanceInMiles <= kMessageRadius) {
+        return YES;
+    }
+    else {
+        return NO;
+    }
 }
 
 - (NSString *)distanceBetweenUserAndLocation:(CLLocation *)location {
-    CLLocationDistance CLDistance = [location distanceFromLocation:location];
+    CLLocationDistance CLDistance = fabs([location distanceFromLocation:self.userLocation]);
     NSString* distance = [NSString stringWithFormat:@"%.1f miles away",(CLDistance/1609.344)];
     return distance;
 }
