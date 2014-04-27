@@ -12,10 +12,11 @@
 - (void)receivedNewMessage:(NSString* )message;
 @end
 
-@interface WHONewMessageViewController : UIViewController 
+@interface WHONewMessageViewController : UIViewController <UITextViewDelegate>
 
 - (IBAction)messageView:(id)sender;
-@property (strong, nonatomic) IBOutlet UITextField *messageField;
 @property (nonatomic, strong) id<WHOMessageProtocol> delegate;
+@property (strong, nonatomic) IBOutlet UITextView *messageField;
+@property (strong, nonatomic) IBOutlet UILabel *placeholderLabel;
 
 @end

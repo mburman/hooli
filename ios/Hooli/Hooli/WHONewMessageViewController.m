@@ -29,9 +29,10 @@
     
     UIBarButtonItem* submitButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(submit:)];
     self.navigationItem.rightBarButtonItem = submitButton;
+    self.messageField.delegate = self;
     
     //for Done button on keyboard
-    [self.messageField addTarget:self action:@selector(messageView:) forControlEvents:UIControlEventEditingDidEndOnExit];
+//    [self.messageField addTarget:self action:@selector(messageView:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 - (void)submit:(id)sender {
@@ -49,4 +50,26 @@
 - (IBAction)messageView:(id)sender {
     [self.messageField resignFirstResponder];
 }
+
+-(void)textViewDidBeginEditing:(UITextView *)textView {
+    self.placeholderLabel.hidden = YES;
+}
+
+//-(void)textViewDidChange:(UITextView *)textView {
+//    self.placeholderLabel.hidden = [self.messageField.text length] > 0;
+//}
+
+-(void)textViewDidEndEditing:(UITextView *)textView {
+    self.placeholderLabel.hidden = [self.messageField.text length] > 0;
+}
+
+//for Done button
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if([text isEqualToString:@"\n"]) {
+        [textView resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
+
 @end
