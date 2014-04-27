@@ -43,17 +43,17 @@ OUT_FILE5=./out5
 OUT_FILE6=./out6
 ##################################################
 
-# Start prunner 1
+# Start arunner 1
 ${ARUNNER} -aport=${ARUNNER_PORT1} &> ${OUT_FILE1} &
 ARUNNER_PID1=$!
 sleep 1
 
-# Start prunner 2
+# Start arunner 2
 ${ARUNNER} -aport=${ARUNNER_PORT2} &> ${OUT_FILE2} &
 ARUNNER_PID2=$!
 sleep 1
 
-# Start prunner 3
+# Start arunner 3
 ${ARUNNER} -aport=${ARUNNER_PORT3} &> ${OUT_FILE3} &
 ARUNNER_PID3=$!
 sleep 1

@@ -13,7 +13,7 @@
 #import "WHOMessageCell.h"
 
 @interface WHOMessageTableViewController () <WHOMessageProtocol>
-
+@property (nonatomic,strong) NSURL* baseURL;
 @end
 
 @implementation WHOMessageTableViewController
@@ -64,19 +64,22 @@ double kMessageRadius = 1.0;
     [self.tableView setRowHeight:150.0];
     [self.tableView registerNib:[UINib nibWithNibName:@"WHOMessageCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"MessageCell"];
     
-    // TODO load messages from server here
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(updateMessageList) forControlEvents:UIControlEventValueChanged];
+    
+    self.baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
+    
     [self updateMessageList];
-    [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateMessageList) userInfo:nil repeats:YES];
+//    [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateMessageList) userInfo:nil repeats:YES];
 }
 
 - (void)updateMessageList {
     NSLog(@"Updating message list");
     
     //using REST
-    NSURL* baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
 //    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
     
-    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:self.baseURL];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
 //    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
 //    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -114,6 +117,7 @@ double kMessageRadius = 1.0;
                 }*/
             }
         }
+        [self.refreshControl endRefreshing];
         [self.tableView reloadData];
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         NSLog(@"REST GET failure wih error: %@", error);
@@ -141,10 +145,9 @@ double kMessageRadius = 1.0;
 //    NSString* longitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.longitude];
     
     //using REST
-    NSURL* baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
     NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
     
-    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseURL];
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:self.baseURL];
 //    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
 //    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/plain"];

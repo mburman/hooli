@@ -127,7 +127,7 @@ OUTER:
 }
 
 func areMessagesEqual(message1 *proposerrpc.Message, message2 *proposerrpc.Message) bool {
-	if message1.Userid == message2.Userid && message1.Message == message2.Message {
+	if message1.Author == message2.Author && message1.MessageText == message2.MessageText {
 		return true
 	}
 	return false
@@ -138,8 +138,8 @@ func sendSingleMessageToAllClients(clients []*rpc.Client, delay int, done chan i
 		userid := rand.Int()
 		fmt.Println("Sending message to client:", i)
 		message := &proposerrpc.Message{
-			Userid:  fmt.Sprintf("%d", userid),
-			Message: fmt.Sprintf("%d", i),
+			Author:  fmt.Sprintf("%d", userid),
+			MessageText: fmt.Sprintf("%d", i),
 		}
 		sendMessage(clients[i], message)
 		time.Sleep(time.Second * time.Duration(delay)) // wait for paxos to complete
@@ -153,8 +153,8 @@ func sendRandomMessagesToRandomClients(clients []*rpc.Client, delay int, done ch
 		userid := rand.Int()
 		fmt.Println("Sending message to client:", proposerToContact)
 		message := &proposerrpc.Message{
-			Userid:  fmt.Sprintf("%d", userid),
-			Message: fmt.Sprintf("%d", i),
+			Author:  fmt.Sprintf("%d", userid),
+			MessageText: fmt.Sprintf("%d", i),
 		}
 		sendMessage(clients[proposerToContact], message)
 		time.Sleep(time.Second * time.Duration(delay)) // wait for paxos to complete
