@@ -48,7 +48,7 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
 	go setupREST(&p, port)
-//	setupRPC(&p,port)
+	setupRPC(&p,port)
 	connectToAcceptors(&p)
 	fmt.Println("done connecting to acceptors")
 	go processMessages(&p) // start processing incoming messa
@@ -94,14 +94,14 @@ func(serv proposerObj) ListMessages() []Message {
 }
 
 // Client calls this to post a message.
-/*
-func (p *proposerObj) PostMessage(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
+
+func (p *proposerObj) PostMessageRPC(args *proposerrpc.PostMessageArgs, reply *proposerrpc.PostMessageReply) error {
 	// Promise to handle. Don't block.
 	fmt.Printf("Received Message to post:  %+v\n", args.Message)
 	go handleMessage(p, &args.Message)
 	return nil
 }
-*/
+
 
 func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *proposerrpc.GetMessagesReply) error {
 	LOGV.Println("Getting messages")

@@ -52,7 +52,7 @@ func sendMessage(client *rpc.Client, message *proposerrpc.Message) {
 	}
 
 	var reply proposerrpc.PostMessageReply
-	err := client.Call("ProposerObj.PostMessage", request, &reply)
+	err := client.Call("ProposerObj.PostMessageRPC", request, &reply)
 	if err != nil {
 		LOGE.Println("rpc error:", err)
 	}
