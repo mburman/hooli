@@ -12,16 +12,17 @@
 
 -(BOOL)isEqual:(id)object {
     WHOMessage* anObject = (WHOMessage*) object;
-    if (self.author == anObject.author) {
-//        NSLog(@"not equal 1");
+    if (![self.author isEqualToString:anObject.author]) {
+        NSLog(@"not equal 1");
         return NO;
     }
-    else if (self.message == anObject.message) {
-//        NSLog(@"not equal 2");
+    else if (![self.message isEqualToString:anObject.message]) {
+        NSLog(@"not equal 2");
         return NO;
     }
-    else if (self.location == anObject.location) {
-//        NSLog(@"not equal 3");
+    double distanceApartInMiles = ([self.location distanceFromLocation:anObject.location])/1609.344;
+    if (distanceApartInMiles > 0.1) {
+        NSLog(@"not equal 3");
         return NO;
     }
     else {

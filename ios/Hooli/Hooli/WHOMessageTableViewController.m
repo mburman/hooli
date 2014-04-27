@@ -99,8 +99,10 @@ double kMessageRadius = 1.0;
             NSNumber* lon = element[@"Longitude"];
             CLLocation* loc = [[CLLocation alloc] initWithLatitude:lat.doubleValue longitude:lon.doubleValue];
             if ([self isMessageWithinRangeAtLocation:loc]) {
+                NSLog(@"Message is within region");
                 WHOMessage* mess = [[WHOMessage alloc] initWithMessage:element[@"MessageText"] Author:element[@"Author"] Location:loc];
                 if (![self.messages containsObject:mess]) {
+                    NSLog(@"Message is not already in list");
                     [self.messages addObject:mess];
                 }
                 /*BOOL messageExists = NO;

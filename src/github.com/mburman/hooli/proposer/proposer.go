@@ -36,8 +36,9 @@ type proposerObj struct {
 
 // port: port for proposer to listen to client requests on.
 // acceptorPorts: ports contact acceptors on.
+var p proposerObj
 func NewProposer(port int, acceptorPorts []string) *proposerObj {
-	var p proposerObj
+//	var p proposerObj
 	p.port = port
 	p.acceptorPorts = acceptorPorts
 	p.messageQueue = make(chan *proposerrpc.Message, 100)
@@ -47,8 +48,8 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.id = rand.Intn(100)               // Random server id.
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
-	go setupREST(&p, port)
-	setupRPC(&p,port)
+	setupREST(&p, port)
+//	setupRPC(&p,port)
 	connectToAcceptors(&p)
 	fmt.Println("done connecting to acceptors")
 	go processMessages(&p) // start processing incoming messa
@@ -73,18 +74,31 @@ func(serv proposerObj) PostMessage(PostData Message){
 	rpcMess.Longitude = PostData.Longitude
 //	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
 	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
-	go handleMessage(&serv, rpcMess)
+	go handleMessage(&p, rpcMess)
 }
 
 func(serv proposerObj) ListMessages() []Message {
 	fmt.Printf("Received request for messages\n");
+	//get messages from acceptor
+	acceptorArgs := &proposerrpc.GetMessagesArgs{
+		Latitude: 0,
+		Longitude: 0,
+		Radius: 0,
+	}
+	acceptorReply := new(proposerrpc.GetMessagesReply)
+	error := p.GetMessages(acceptorArgs,acceptorReply)
+	if error != nil {
+		LOGE.Println("error REST GETting messages")
+		return nil
+	}
 	messArray := make([]Message,0)
-	for _,v := range serv.messages {
+	for _,v := range acceptorReply.Messages {
 		mess := new(Message)
 		mess.MessageText = v.MessageText
 		mess.Latitude = v.Latitude
-		mess.Longitude = v.Latitude
+		mess.Longitude = v.Longitude
 		mess.Author = v.Author
+		fmt.Println("appending to messArray: ",mess)
 		messArray = append(messArray, *mess)
 	}
 //	messArray = append(messArray,Message{Latitude:37.33233141,Longitude:-122.03121860,MessageText:"test1",Author:"Dylan Koenig"})
@@ -127,6 +141,7 @@ func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *prop
 
 func handleMessage(p *proposerObj, message *proposerrpc.Message) {
 	fmt.Println("handling message:",*message)
+	fmt.Printf("pobj: %+v\n", p)
 	p.messageQueue <- message
 	fmt.Println("handled message:",*message)
 }
@@ -203,23 +218,23 @@ func sendCommit(p *proposerObj, client *rpc.Client, message *proposerrpc.Message
 }
 
 // Continuously reads messages from queue and Paxos' them
-func processMessages(p *proposerObj) {
+func processMessages(pGlobal *proposerObj) {
 	for {
 		fmt.Println("waiting for message to process")
-		message := <-p.messageQueue
+		message := <-pGlobal.messageQueue
 		fmt.Println("processing message: ", *message)
 		for {
 			delayMills := rand.Intn(75) // Random delay to avoid conflicts.
 			time.Sleep(time.Millisecond * time.Duration(delayMills))
-			proposal := generateProposal(p)
+			proposal := generateProposal(pGlobal)
 
 			// Send prepares. TODO: needs to be done async since nodes might go down.
 			acceptCount := 0
 			highestCancelProposalNumber := -1
 			highestIndex := 0
-			for _, a := range p.acceptorList {
+			for _, a := range pGlobal.acceptorList {
 				// Send prepare message to all the acceptors
-				prepareReply := sendPrepare(p, a, proposal)
+				prepareReply := sendPrepare(pGlobal, a, proposal)
 				if prepareReply.Status == acceptorrpc.OK {
 					if highestIndex < prepareReply.Index {
 						highestIndex = prepareReply.Index
@@ -236,8 +251,8 @@ func processMessages(p *proposerObj) {
 
 			// If a majority have not accepted - this is not the leader
 			// Try again.
-			if acceptCount <= len(p.acceptorList)/2 {
-				p.maxProposalNumber = highestCancelProposalNumber
+			if acceptCount <= len(pGlobal.acceptorList)/2 {
+				pGlobal.maxProposalNumber = highestCancelProposalNumber
 				continue
 			}
 
@@ -245,8 +260,8 @@ func processMessages(p *proposerObj) {
 			// LEADER. Send accepts.
 			acceptCount = 0
 			highestCancelProposalNumber = -1
-			for _, a := range p.acceptorList {
-				acceptReply := sendAccept(p, a, proposal, message)
+			for _, a := range pGlobal.acceptorList {
+				acceptReply := sendAccept(pGlobal, a, proposal, message)
 				if acceptReply.Status == acceptorrpc.OK {
 					acceptCount++
 				} else if acceptReply.Status == acceptorrpc.CANCEL {
@@ -258,15 +273,15 @@ func processMessages(p *proposerObj) {
 				}
 			}
 
-			if acceptCount <= len(p.acceptorList)/2 {
-				p.maxProposalNumber = highestCancelProposalNumber
+			if acceptCount <= len(pGlobal.acceptorList)/2 {
+				pGlobal.maxProposalNumber = highestCancelProposalNumber
 				continue
 			}
 
 			fmt.Println("COMMITTING")
 			// Value has been chosen.
-			for _, a := range p.acceptorList {
-				sendCommit(p, a, message, highestIndex)
+			for _, a := range pGlobal.acceptorList {
+				sendCommit(pGlobal, a, message, highestIndex)
 			}
 
 			break // get a new message.
