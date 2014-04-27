@@ -31,7 +31,7 @@ type proposerObj struct {
 
 	//REST things
 	gorest.RestService `root:"/proposer/" consumes:"application/json" produces:"application/json"`
-	listMessages gorest.EndPoint `method:"GET" path:"/items/" output:"[]Message"`
+	listMessages gorest.EndPoint `method:"GET" path:"/messages/" output:"[]Message"`
 	postMessage gorest.EndPoint `method:"POST" path:"/messages/" postdata:"Message"`
 }
 
@@ -75,8 +75,21 @@ func(serv proposerObj) PostMessage(PostData Message){
 	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
 }
 
-func(serv proposerObj) ListMessages() []proposerrpc.Message {
-	return serv.messages
+func(serv proposerObj) ListMessages() []Message {
+	fmt.Printf("Received request for messages\n");
+	messArray := make([]Message,0)
+	for _,v := range serv.messages {
+		mess := new(Message)
+		mess.MessageText = v.MessageText
+		mess.Latitude = v.Latitude
+		mess.Longitude = v.Latitude
+		mess.Author = v.Author
+		messArray = append(messArray, *mess)
+	}
+//	messArray = append(messArray,Message{Latitude:37.33233141,Longitude:-122.03121860,MessageText:"test1",Author:"Dylan Koenig"})
+//	messArray = append(messArray,Message{Latitude:37.33233141,Longitude:-122.03121860,MessageText:"test2",Author:"Dylan Koenig"})
+//	fmt.Println("messages:",messArray)
+	return messArray
 }
 
 // Client calls this to post a message.
