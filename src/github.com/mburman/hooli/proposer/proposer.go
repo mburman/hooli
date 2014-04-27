@@ -48,8 +48,9 @@ func NewProposer(port int, acceptorPorts []string) *proposerObj {
 	p.maxProposalNumber = rand.Intn(10) // Randomize initial round number.
 
 	go setupREST(&p, port)
-	setupRPC(&p,port)
+//	setupRPC(&p,port)
 	connectToAcceptors(&p)
+	fmt.Println("done connecting to acceptors")
 	go processMessages(&p) // start processing incoming messa
 	return &p
 }
@@ -70,9 +71,9 @@ func(serv proposerObj) PostMessage(PostData Message){
 	rpcMess.Author = PostData.Author
 	rpcMess.Latitude = PostData.Latitude
 	rpcMess.Longitude = PostData.Longitude
-	go handleMessage(&serv, rpcMess)
 //	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
 	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
+	go handleMessage(&serv, rpcMess)
 }
 
 func(serv proposerObj) ListMessages() []Message {
@@ -125,7 +126,9 @@ func (p *proposerObj) GetMessages(args *proposerrpc.GetMessagesArgs, reply *prop
 }
 
 func handleMessage(p *proposerObj, message *proposerrpc.Message) {
+	fmt.Println("handling message:",*message)
 	p.messageQueue <- message
+	fmt.Println("handled message:",*message)
 }
 
 func connectToAcceptors(p *proposerObj) {
@@ -202,7 +205,9 @@ func sendCommit(p *proposerObj, client *rpc.Client, message *proposerrpc.Message
 // Continuously reads messages from queue and Paxos' them
 func processMessages(p *proposerObj) {
 	for {
+		fmt.Println("waiting for message to process")
 		message := <-p.messageQueue
+		fmt.Println("processing message: ", *message)
 		for {
 			delayMills := rand.Intn(75) // Random delay to avoid conflicts.
 			time.Sleep(time.Millisecond * time.Duration(delayMills))
@@ -284,5 +289,5 @@ func setupREST(a *proposerObj, port int) {
 	fmt.Println("Proposer RESTing:", port)
 	gorest.RegisterService(a)
 	http.Handle("/",gorest.Handle())
-	http.ListenAndServe(fmt.Sprintf(":%d", port),nil)
+	go http.ListenAndServe(fmt.Sprintf(":%d", port),nil)
 }
