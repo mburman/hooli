@@ -28,14 +28,14 @@ double kMessageRadius = 1.0;
         UIColor* hooliColor = [UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
         UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
         UIColor* goldColor = [UIColor colorWithRed:198.0/255 green:150.0/255 blue:73.0/255 alpha:1.0];
-//        UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
+        UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
-        [self.tableView setSeparatorColor:goldColor];
+        [self.tableView setSeparatorColor:hooliColor];
         [self.tableView setBackgroundColor:brownColor];
         UILabel* titleLabel = [[UILabel alloc] init];
         [titleLabel setText:@"Hooli"];
         [titleLabel setFont:[UIFont fontWithName:@"Superclarendon-BlackItalic" size:25.0]];
-        [titleLabel setTextColor:hooliColor];
+        [titleLabel setTextColor:goldColor];
 //        [titleLabel setAlpha:0.75];
         [titleLabel.layer setShadowColor:[UIColor darkGrayColor].CGColor];
         [titleLabel.layer setShadowOffset:(CGSize) { .width = 1.0, .height = 1.0 }];
@@ -134,6 +134,7 @@ double kMessageRadius = 1.0;
         NSLog(@"REST GET failure wih error: %@", error);
         [self.refreshControl endRefreshing];
     }];
+//    [self.refreshControl endRefreshing];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {

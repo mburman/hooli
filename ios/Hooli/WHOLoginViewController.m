@@ -47,6 +47,19 @@
     }
     NSLog(@"user is logged in with Facebook, switching to messageTableView");
     self.waitingToLogIn = NO;
+
+    [FBRequestConnection startWithGraphPath:@"me?fields=cover" completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error) {
+            NSLog(@"FB success");
+            NSDictionary* coverDict = result[@"cover"];
+            NSData *coverPhoto = [NSData dataWithContentsOfURL:[NSURL URLWithString:coverDict[@"source"]]];
+        }
+        else {
+            NSLog(@"FB error: %@",error);
+        }
+        
+    }];
+
     UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name]];
     [self presentViewController:nav animated:NO completion:nil];
 }
