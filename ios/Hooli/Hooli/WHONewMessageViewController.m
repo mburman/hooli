@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     
-    UIColor* hooliColor =[UIColor colorWithRed:70.0/255 green:235.0/255 blue:150.0/255 alpha:1.0];
+    UIColor* hooliColor =[UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
     UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
     
     self.messageField.delegate = self;
@@ -41,8 +41,8 @@
     [titleLabel setTextColor:hooliColor];
 //        [titleLabel setAlpha:0.75];
     [titleLabel.layer setShadowColor:[UIColor darkGrayColor].CGColor];
-    [titleLabel.layer setShadowOffset:(CGSize) { .width = 1.5, .height = 1.5 }];
-    [titleLabel.layer setShadowRadius:1.5];
+    [titleLabel.layer setShadowOffset:(CGSize) { .width = 1.0, .height = 1.0 }];
+    [titleLabel.layer setShadowRadius:1.0];
     [titleLabel.layer setShadowOpacity:.65];
     [titleLabel sizeToFit];
     [self.navigationItem setTitleView:titleLabel];
@@ -50,19 +50,33 @@
     [self.view setBackgroundColor:brownColor];
     [self.messageField setBackgroundColor:brownColor];
     [self.messageField setTextColor:hooliColor];
-//    [self.messageField setTextContainerInset:UIEdgeInsetsMake(172.0, self.messageField.window.bounds.origin.x, self.messageField.window.bounds.origin.y+self.messageField.window.bounds.size.height, self.messageField.window.bounds.origin.x+self.messageField.window.bounds.size.width)];
+    
+    [self.messageField addObserver:self forKeyPath:@"contentSize" options:(NSKeyValueObservingOptionNew) context:NULL];
     
     //for Done button on keyboard
 //    [self.messageField addTarget:self action:@selector(messageView:) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
+//center the text vertically in the UITextView
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    UITextView *tv = object;
+    CGFloat topCorrect = ([tv bounds].size.height - [tv contentSize].height * [tv zoomScale])/2.0;
+    topCorrect = ( topCorrect < 0.0 ? 0.0 : topCorrect );
+    tv.contentOffset = (CGPoint){.x = 0, .y = -topCorrect};
+}
+
 - (void)submit:(id)sender {
     [self.delegate receivedNewMessage:self.messageField.text];
+    [UIView animateWithDuration:0.7
+                     animations:^{
+                         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+                         [UIView setAnimationTransition:UIViewAnimationTransitionCurlDown forView:self.navigationController.view cache:NO];
+                     }];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)showPostButton {
-    UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:.85];
+    UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
     UIBarButtonItem* submitButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(submit:)];
     [submitButton setTintColor:brownColor];
     [self.navigationItem setRightBarButtonItem:submitButton animated:YES];
