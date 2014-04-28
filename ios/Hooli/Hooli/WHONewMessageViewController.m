@@ -32,7 +32,8 @@
     
     self.messageField.delegate = self;
     
-    [self.navigationItem.leftBarButtonItem setTintColor:brownColor];
+//    [self.navigationItem.backBarButtonItem setTintColor:brownColor];
+    [self.navigationController.navigationBar setTintColor:brownColor];
     
     UILabel* titleLabel = [[UILabel alloc] init];
     [titleLabel setText:@"Hooli"];
