@@ -65,7 +65,7 @@ double kMessageRadius = 1.0;
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-//    UIColor* hooliColor =[UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
+    UIColor* hooliColor =[UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
     UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
     UIBarButtonItem* newMessageButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newMessage:)];
     [newMessageButton setTintColor:brownColor];
@@ -76,6 +76,7 @@ double kMessageRadius = 1.0;
     
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(updateMessageList) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl setTintColor:hooliColor];
     
     self.baseURL = [NSURL URLWithString:@"http://192.168.1.19:9009/proposer/"];
     
