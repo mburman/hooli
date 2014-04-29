@@ -7,6 +7,7 @@ type Message struct {
 	MessageText   string
 	Author    string
 	Timestamp string
+	EncodedPhoto string
 }
 
 

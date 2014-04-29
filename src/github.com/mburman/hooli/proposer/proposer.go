@@ -61,6 +61,7 @@ type Message struct {
 	Longitude float64
 	MessageText   string
 	Author    string
+	EncodedPhoto string
 }
 
 //REST method handler for posting message
@@ -72,6 +73,7 @@ func(serv proposerObj) PostMessage(PostData Message){
 	rpcMess.Author = PostData.Author
 	rpcMess.Latitude = PostData.Latitude
 	rpcMess.Longitude = PostData.Longitude
+	rpcMess.EncodedPhoto = PostData.EncodedPhoto
 //	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/"+string(m.author)) //Created, http 201
 	serv.ResponseBuilder().Created("http://localhost:9009/proposer/messages/") //Created, http 201
 	go handleMessage(&p, rpcMess)
@@ -98,6 +100,7 @@ func(serv proposerObj) ListMessages() []Message {
 		mess.Latitude = v.Latitude
 		mess.Longitude = v.Longitude
 		mess.Author = v.Author
+		mess.EncodedPhoto = v.EncodedPhoto
 		fmt.Println("appending to messArray: ",mess)
 		messArray = append(messArray, *mess)
 	}

@@ -20,7 +20,7 @@
 
 double kMessageRadius = 1.0;
 
-- (id)initWithStyle:(UITableViewStyle)style WithUserName:(NSString* )userName
+- (id)initWithStyle:(UITableViewStyle)style WithUserName:(NSString* )userName WithEncodedPhoto:(NSString*)encodedPhoto
 {
     self = [super initWithStyle:style];
     if (self) {
@@ -28,7 +28,7 @@ double kMessageRadius = 1.0;
         UIColor* hooliColor = [UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
         UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
         UIColor* goldColor = [UIColor colorWithRed:198.0/255 green:150.0/255 blue:73.0/255 alpha:1.0];
-        UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
+//        UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
         [self.tableView setSeparatorColor:hooliColor];
         [self.tableView setBackgroundColor:brownColor];
@@ -45,6 +45,7 @@ double kMessageRadius = 1.0;
         [self.navigationItem setTitleView:titleLabel];
         self.messages = [NSMutableArray array];
         self.userName = userName;
+        self.userEncodedPhoto = encodedPhoto;
         
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -109,7 +110,7 @@ double kMessageRadius = 1.0;
             CLLocation* loc = [[CLLocation alloc] initWithLatitude:lat.doubleValue longitude:lon.doubleValue];
             if ([self isMessageWithinRangeAtLocation:loc]) {
                 NSLog(@"Message is within region");
-                WHOMessage* mess = [[WHOMessage alloc] initWithMessage:element[@"MessageText"] Author:element[@"Author"] Location:loc];
+                WHOMessage* mess = [[WHOMessage alloc] initWithMessage:element[@"MessageText"] Author:element[@"Author"] Location:loc EncodedPhoto:element[@"EncodedPhoto"]];
                 if (![self.messages containsObject:mess]) {
                     NSLog(@"Message is not already in list");
                     [self.messages addObject:mess];
@@ -135,6 +136,11 @@ double kMessageRadius = 1.0;
         [self.refreshControl endRefreshing];
     }];
 //    [self.refreshControl endRefreshing];
+}
+
+- (UIImage *)decodeBase64ToImage:(NSString *)strEncodeData {
+    NSData *data = [[NSData alloc]initWithBase64EncodedString:strEncodeData options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    return [UIImage imageWithData:data];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
@@ -163,7 +169,7 @@ double kMessageRadius = 1.0;
 //    NSString* longitude = [[NSString alloc] initWithFormat:@"%f", self.userLocation.coordinate.longitude];
     
     //using REST
-    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude]};
+    NSDictionary* parameters = @{@"MessageText" : message, @"Author" : self.userName, @"Latitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.latitude], @"Longitude" : [NSNumber numberWithDouble: self.userLocation.coordinate.longitude], @"EncodedPhoto" : self.userEncodedPhoto};
     
     AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:self.baseURL];
 //    manager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -223,6 +229,13 @@ double kMessageRadius = 1.0;
     cell.messageLabel.text = message.message;
     cell.authorLabel.text = message.author;
     cell.distanceLabel.text = [self distanceBetweenUserAndLocation:message.location];
+
+    //decode and set photo
+    UIImage* decodedPhoto = [self decodeBase64ToImage:message.encodedPhoto];
+    UIImageView* photoView = [[UIImageView alloc] initWithImage:decodedPhoto];
+    photoView.frame = CGRectMake(0, 0, 314.0, 119.0);
+    [photoView setContentMode:UIViewContentModeScaleToFill];
+    cell.backgroundView = photoView;
     return cell;
 }
 

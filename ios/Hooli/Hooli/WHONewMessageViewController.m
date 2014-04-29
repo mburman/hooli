@@ -33,6 +33,8 @@
 //    UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
     
     self.messageField.delegate = self;
+    self.messageField.textAlignment = NSTextAlignmentCenter;
+    self.messageField.font = [UIFont fontWithName:@"AvenirNextCondensed-DemiBold" size:17.0];
     
 //    [self.navigationItem.backBarButtonItem setTintColor:brownColor];
     [self.navigationController.navigationBar setTintColor:brownColor];

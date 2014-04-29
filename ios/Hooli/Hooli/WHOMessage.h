@@ -11,11 +11,12 @@
 
 @interface WHOMessage : NSObject
 
-- (instancetype) initWithMessage:(NSString* )message Author:(NSString* )author Location:(CLLocation *)location;
+- (instancetype) initWithMessage:(NSString* )message Author:(NSString* )author Location:(CLLocation *)location EncodedPhoto:(NSString* )encodedPhoto;
 -(BOOL)isEqual:(id)object;
 //-(BOOL)isEqualToObject:(WHOMessage* )object;
 @property (nonatomic, strong) NSString* message;
 @property (nonatomic, strong) NSString* author;
 @property (nonatomic, strong) CLLocation* location;
+@property (nonatomic, strong) NSString* encodedPhoto;
 
 @end

@@ -31,11 +31,12 @@
     }
 }
 
-- (instancetype)initWithMessage:(NSString *)message Author:(NSString *)author Location:(CLLocation *)location {
+- (instancetype)initWithMessage:(NSString *)message Author:(NSString *)author Location:(CLLocation *)location EncodedPhoto:(NSString *)encodedPhoto{
     if (self = [super init]) {
         self.message = message;
         self.author = author;
         self.location = location;
+        self.encodedPhoto = encodedPhoto;
     }
     return self;
 }

@@ -47,22 +47,47 @@
     }
     NSLog(@"user is logged in with Facebook, switching to messageTableView");
     self.waitingToLogIn = NO;
-
+    
     [FBRequestConnection startWithGraphPath:@"me?fields=cover" completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
         if (!error) {
             NSLog(@"FB success");
             NSDictionary* coverDict = result[@"cover"];
             NSData *coverPhoto = [NSData dataWithContentsOfURL:[NSURL URLWithString:coverDict[@"source"]]];
+            //blur image
+            UIImage* uiPhoto = [UIImage imageWithData:coverPhoto];
+            CIFilter* gaussianBlur = [CIFilter filterWithName:@"CIGaussianBlur"];
+            [gaussianBlur setDefaults];
+            [gaussianBlur setValue:[CIImage imageWithData:coverPhoto] forKey:kCIInputImageKey];
+            [gaussianBlur setValue:@5 forKey:kCIInputRadiusKey];
+            CIImage* blurredOutput = [gaussianBlur outputImage];
+            CIContext *context   = [CIContext contextWithOptions:nil];
+            CGRect rect = [blurredOutput extent];
+            rect.origin.x += (rect.size.width  - uiPhoto.size.width ) / 2;
+            rect.origin.y += (rect.size.height - uiPhoto.size.height) / 2;
+            rect.size = uiPhoto.size;
+            CGImageRef cgimg = [context createCGImage:blurredOutput fromRect:rect];
+            UIImage* blurredPhoto = [UIImage imageWithCGImage:cgimg];
+            CGImageRelease(cgimg);
+            NSString* encodedPhoto = [self encodeToBase64String:blurredPhoto];
+            
+            
+            UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name WithEncodedPhoto:encodedPhoto]];
+            [self presentViewController:nav animated:NO completion:nil];
         }
         else {
             NSLog(@"FB error: %@",error);
+            UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name WithEncodedPhoto:nil]];
+            [self presentViewController:nav animated:NO completion:nil];
         }
         
     }];
 
-    UINavigationController* nav = [[UINavigationController alloc] initWithRootViewController:[[WHOMessageTableViewController alloc] initWithStyle:UITableViewStylePlain WithUserName:user.name]];
-    [self presentViewController:nav animated:NO completion:nil];
 }
+
+- (NSString *)encodeToBase64String:(UIImage *)image {
+    return [UIImagePNGRepresentation(image) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+}
+
 
 /*
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
