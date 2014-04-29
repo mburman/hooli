@@ -24,7 +24,7 @@
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
                 </textView>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Distribute a new message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TGu-2E-oEg">
-                    <rect key="frame" x="20" y="216" width="280" height="21"/>
+                    <rect key="frame" x="20" y="220" width="280" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" name="AvenirNextCondensed-Regular" family="Avenir Next Condensed" pointSize="19"/>
                     <color key="textColor" red="0.42745098039215684" green="0.82745098039215681" blue="0.66666666666666663" alpha="0.70000000000000007" colorSpace="calibratedRGB"/>

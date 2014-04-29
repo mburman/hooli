@@ -139,4 +139,8 @@
     return YES;
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.messageField removeObserver:self forKeyPath:@"contentSize"];
+}
+
 @end
