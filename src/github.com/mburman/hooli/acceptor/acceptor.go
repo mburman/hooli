@@ -23,6 +23,7 @@ type acceptorObj struct {
 	messages        []proposerrpc.Message
 	mutex           *sync.Mutex
 	port            int
+	filled          []int
 }
 
 // port: port to start the acceptorObj on.
@@ -31,6 +32,7 @@ func NewAcceptor(port int) *acceptorObj {
 	a.minProposal = &acceptorrpc.Proposal{Number: -1, ID: -1}
 	a.acceptedMessage = nil
 	a.messages = make([]proposerrpc.Message, 0)
+	a.filled = make([]int, 0)
 	a.mutex = &sync.Mutex{}
 	a.port = port
 	a.nextIndex = 0
@@ -75,9 +77,15 @@ func (a *acceptorObj) Accept(args *acceptorrpc.AcceptArgs, reply *acceptorrpc.Ac
 	} else if args.Proposal.Number == a.minProposal.Number && args.Proposal.ID < a.minProposal.ID {
 		reply.Status = acceptorrpc.CANCEL
 	} else {
-		reply.Status = acceptorrpc.OK
-		a.acceptedMessage = &args.ProposalMessage
-		a.minProposal = &args.Proposal
+		// if that position has already been filled
+		if args.Index < a.nextIndex && a.filled[args.Index] == 1 {
+			reply.Status = acceptorrpc.ALREADY_FILLED
+			reply.Message = a.messages[args.Index]
+		} else {
+			reply.Status = acceptorrpc.OK
+			a.acceptedMessage = &args.ProposalMessage
+			a.minProposal = &args.Proposal
+		}
 	}
 
 	reply.MinProposalNumber = a.minProposal.Number
@@ -89,19 +97,28 @@ func (a *acceptorObj) Commit(args *acceptorrpc.CommitArgs, reply *acceptorrpc.Co
 	defer a.mutex.Unlock()
 	fmt.Println("Committed message:", args.Message)
 	fmt.Println("Index:", args.Index)
+	fmt.Println("len messages:", len(a.messages))
 	// Increase the size of the array if it is too small.
 	if len(a.messages) <= args.Index {
 		temp := a.messages
-		a.messages = make([]proposerrpc.Message, 1+len(a.messages))
+		a.messages = make([]proposerrpc.Message, args.Index+1)
 		copy(a.messages, temp)
+
+		// TODO: very inefficient
+		temp1 := a.filled
+		a.filled = make([]int, args.Index+1)
+		copy(a.filled, temp1)
 	}
 	a.messages[args.Index] = args.Message
+	a.filled[args.Index] = 1
 
 	if a.nextIndex == args.Index {
 		a.nextIndex = args.Index + 1
 		fmt.Println("Incrementing")
 	} else if a.nextIndex < args.Index {
 		// TODO: missing values... fill
+		// just ask for all values
+
 		a.nextIndex = args.Index + 1
 		fmt.Println("Incrementing")
 	}

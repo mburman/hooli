@@ -112,41 +112,72 @@ func generateProposal(p *proposerObj) *acceptorrpc.Proposal {
 	}
 }
 
-func sendPrepare(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Proposal) acceptorrpc.PrepareReply {
+func sendPrepare(p *proposerObj, index int, proposal *acceptorrpc.Proposal) acceptorrpc.PrepareReply {
 	request := &acceptorrpc.PrepareArgs{
 		Proposal: *proposal,
 	}
 	var reply acceptorrpc.PrepareReply
+	client := p.acceptorList[index]
 	err := client.Call("AcceptorObj.Prepare", request, &reply)
 	if err != nil {
 		LOGE.Println("rpc error:", err)
+		client, err := rpc.DialHTTP("tcp", ":"+p.acceptorPorts[index])
+		if err != nil {
+			// Quit if we can't redial. It means the client is down.
+			LOGE.Println("Client still down:", err)
+			return reply
+		} else {
+			p.acceptorList[index] = client
+			return sendPrepare(p, index, proposal)
+		}
 	}
 	return reply
 }
 
-func sendAccept(p *proposerObj, client *rpc.Client, proposal *acceptorrpc.Proposal,
-	acceptedMessage *proposerrpc.Message) acceptorrpc.AcceptReply {
+func sendAccept(p *proposerObj, index int, proposal *acceptorrpc.Proposal,
+	acceptedMessage *proposerrpc.Message, logIndex int) acceptorrpc.AcceptReply {
 	request := &acceptorrpc.AcceptArgs{
 		Proposal:        *proposal,
 		ProposalMessage: *acceptedMessage,
+		Index:           logIndex,
 	}
 	var reply acceptorrpc.AcceptReply
+	client := p.acceptorList[index]
 	err := client.Call("AcceptorObj.Accept", request, &reply)
 	if err != nil {
 		LOGE.Println("rpc error:", err)
+		client, err = rpc.DialHTTP("tcp", ":"+p.acceptorPorts[index])
+		if err != nil {
+			// Quit if we can't redial. It means the client is down.
+			LOGE.Println("Client still down:", err)
+			return reply
+		} else {
+			p.acceptorList[index] = client
+			return sendAccept(p, index, proposal, acceptedMessage, logIndex)
+		}
 	}
 	return reply
 }
 
-func sendCommit(p *proposerObj, client *rpc.Client, message *proposerrpc.Message, index int) acceptorrpc.CommitReply {
+func sendCommit(p *proposerObj, index int, message *proposerrpc.Message, logindex int) acceptorrpc.CommitReply {
 	request := &acceptorrpc.CommitArgs{
 		Message: *message,
-		Index:   index,
+		Index:   logindex,
 	}
 	var reply acceptorrpc.CommitReply
+	client := p.acceptorList[index]
 	err := client.Call("AcceptorObj.Commit", request, &reply)
 	if err != nil {
 		LOGE.Println("rpc error:", err)
+		client, err = rpc.DialHTTP("tcp", ":"+p.acceptorPorts[index])
+		if err != nil {
+			// Quit if we can't redial. It means the client is down.
+			LOGE.Println("Client still down:", err)
+			return reply
+		} else {
+			p.acceptorList[index] = client
+			return sendCommit(p, index, message, logindex)
+		}
 	}
 	return reply
 }
@@ -163,13 +194,14 @@ func processMessages(p *proposerObj) {
 			// Send prepares. TODO: needs to be done async since nodes might go down.
 			acceptCount := 0
 			highestCancelProposalNumber := -1
-			highestIndex := 0
-			for _, a := range p.acceptorList {
+			lowestIndex := 5000000 //TODO: intmax
+			messageToSend := message
+			for i, _ := range p.acceptorList {
 				// Send prepare message to all the acceptors
-				prepareReply := sendPrepare(p, a, proposal)
+				prepareReply := sendPrepare(p, i, proposal)
 				if prepareReply.Status == acceptorrpc.OK {
-					if highestIndex < prepareReply.Index {
-						highestIndex = prepareReply.Index
+					if lowestIndex > prepareReply.Index {
+						lowestIndex = prepareReply.Index
 					}
 					acceptCount++
 				} else if prepareReply.Status == acceptorrpc.PREV_ACCEPTED {
@@ -192,10 +224,15 @@ func processMessages(p *proposerObj) {
 			// LEADER. Send accepts.
 			acceptCount = 0
 			highestCancelProposalNumber = -1
-			for _, a := range p.acceptorList {
-				acceptReply := sendAccept(p, a, proposal, message)
+			messageSent := true
+			for i, _ := range p.acceptorList {
+				acceptReply := sendAccept(p, i, proposal, messageToSend, lowestIndex)
 				if acceptReply.Status == acceptorrpc.OK {
 					acceptCount++
+				} else if acceptReply.Status == acceptorrpc.ALREADY_FILLED {
+					messageToSend = &acceptReply.Message
+					acceptCount++
+					messageSent = false
 				} else if acceptReply.Status == acceptorrpc.CANCEL {
 					if acceptReply.MinProposalNumber >= highestCancelProposalNumber {
 						highestCancelProposalNumber = acceptReply.MinProposalNumber
@@ -212,11 +249,13 @@ func processMessages(p *proposerObj) {
 
 			fmt.Println("COMMITTING")
 			// Value has been chosen.
-			for _, a := range p.acceptorList {
-				sendCommit(p, a, message, highestIndex)
+			for i, _ := range p.acceptorList {
+				sendCommit(p, i, messageToSend, lowestIndex)
 			}
 
-			break // get a new message.
+			if messageSent {
+				break // get a new message.
+			}
 		}
 	}
 }
