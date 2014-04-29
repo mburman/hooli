@@ -25,12 +25,11 @@ double kMessageRadius = 1.0;
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
-        UIColor* hooliColor = [UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
+//        UIColor* hooliColor = [UIColor colorWithRed:109.0/255 green:211.0/255 blue:170.0/255 alpha:1.0];
         UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
         UIColor* goldColor = [UIColor colorWithRed:198.0/255 green:150.0/255 blue:73.0/255 alpha:1.0];
 //        UIColor* brickColor = [UIColor colorWithRed:207.0/255 green:86.0/255 blue:61.0/255 alpha:1.0];
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
-        [self.tableView setSeparatorColor:hooliColor];
         [self.tableView setBackgroundColor:brownColor];
         UILabel* titleLabel = [[UILabel alloc] init];
         [titleLabel setText:@"Hooli"];
@@ -69,6 +68,7 @@ double kMessageRadius = 1.0;
     UIColor* brownColor = [UIColor colorWithRed:78.0/255 green:46.0/255 blue:40.0/255 alpha:1.0];
     UIBarButtonItem* newMessageButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newMessage:)];
     [newMessageButton setTintColor:brownColor];
+    [self.tableView setSeparatorColor:hooliColor];
     self.navigationItem.rightBarButtonItem = newMessageButton;
     
     [self.tableView setRowHeight:150.0];
