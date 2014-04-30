@@ -24,14 +24,14 @@
                         <rect key="frame" x="165" y="122" width="145" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" name="AvenirNextCondensed-Regular" family="Avenir Next Condensed" pointSize="15"/>
-                        <color key="textColor" red="0.81176470588235294" green="0.33725490196078434" blue="0.23921568627450979" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                        <color key="textColor" red="0.78431372549019607" green="0.91764705882352937" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="authorLabel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGT-NX-lz1">
                         <rect key="frame" x="10" y="122" width="145" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" name="AvenirNextCondensed-Regular" family="Avenir Next Condensed" pointSize="15"/>
-                        <color key="textColor" red="0.81176470588235294" green="0.33725490196078434" blue="0.23921568627450979" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
+                        <color key="textColor" red="0.78431372549019607" green="0.91764705882352937" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
