@@ -12,6 +12,7 @@ const (
 	OK            Status = iota + 1 // The RPC was a success.
 	PREV_ACCEPTED                   // Something else was previously accepted.
 	CANCEL
+	ALREADY_FILLED
 )
 
 type Proposal struct {
@@ -33,11 +34,13 @@ type PrepareReply struct {
 type AcceptArgs struct {
 	Proposal        Proposal
 	ProposalMessage proposerrpc.Message
+	Index           int // send index where we want to commit
 }
 
 type AcceptReply struct {
 	MinProposalNumber int
 	Status            Status
+	Message           proposerrpc.Message
 }
 
 type CommitArgs struct {
