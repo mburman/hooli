@@ -265,7 +265,7 @@ func processMessages(pGlobal *proposerObj) {
 			// Send prepares. TODO: needs to be done async since nodes might go down.
 			acceptCount := 0
 			highestCancelProposalNumber := -1
-			lowestIndex := 5000000 //TODO: intmax
+			lowestIndex := 2147483647//TODO: intmax
 			messageToSend := message
 			for i, _ := range pGlobal.acceptorList {
 				// Send prepare message to all the acceptors
